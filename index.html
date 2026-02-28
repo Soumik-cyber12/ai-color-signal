@@ -2,219 +2,283 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REDVAULT Signal</title>
+<title>Obsidian X — Quantum Signal</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
-
 body{
-background:#f3f4f6;
+background:#050816;
+color:white;
+overflow-x:hidden;
 }
 
-/* Header */
-.header{
-background:linear-gradient(90deg,#ff5f6d,#ff3d3d);
-color:white;
-padding:15px;
+/* Floating particles canvas */
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+/* Container */
+.container{
+max-width:520px;
+margin:auto;
+padding:25px;
+}
+
+/* Heading */
+h1{
 text-align:center;
-font-weight:bold;
-font-size:20px;
-letter-spacing:1px;
+margin-top:40px;
+font-size:28px;
+letter-spacing:2px;
+background:linear-gradient(90deg,#00f2ff,#8b5cf6);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
-
-/* Toggle */
-.toggle{
-margin:20px;
-display:flex;
-border-radius:30px;
-overflow:hidden;
-background:#ddd;
-}
-
-.toggle div{
-flex:1;
-padding:12px;
+.subtitle{
 text-align:center;
-font-weight:bold;
+opacity:0.4;
+margin-top:5px;
+font-size:12px;
 }
 
-.big-btn{
-background:#b7791f;
-color:white;
+/* Glass Card */
+.card{
+margin-top:35px;
+padding:30px;
+border-radius:20px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(30px);
+border:1px solid rgba(255,255,255,0.08);
+box-shadow:0 0 50px rgba(0,0,0,0.8);
+transition:0.4s;
 }
 
-.small-btn{
-background:#2b6cb0;
-color:white;
-}
-
-/* Tabs */
-.tabs{
-display:flex;
-margin:10px 20px;
-gap:10px;
-}
-
-.tab{
-flex:1;
-padding:10px;
+/* Hero Bet Panel */
+.bet-hero{
 text-align:center;
-border-radius:12px;
-background:white;
+font-size:40px;
 font-weight:bold;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
+margin-top:20px;
+opacity:0;
+transform:scale(0.8);
+transition:0.5s ease;
+}
+.reveal{
+opacity:1;
+transform:scale(1);
 }
 
-.active{
-background:linear-gradient(90deg,#ff5f6d,#ff3d3d);
-color:white;
-}
-
-/* Table */
-.table-container{
-margin:20px;
-background:white;
-border-radius:15px;
-overflow:hidden;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th{
-background:#ff4d4d;
-color:white;
-padding:12px;
-font-size:14px;
-}
-
-td{
-padding:12px;
-text-align:center;
-border-bottom:1px solid #eee;
-font-size:14px;
-}
-
-.number{
-font-size:22px;
-font-weight:bold;
-}
-
-.red{color:#ef4444;}
+.big{color:#3b82f6;}
+.small{color:#a855f7;}
 .green{color:#22c55e;}
+.red{color:#ef4444;}
 
-.dot{
-height:12px;
-width:12px;
-border-radius:50%;
-display:inline-block;
-}
-
-.dot.red{background:#ef4444;}
-.dot.green{background:#22c55e;}
-
-/* Pagination */
-.pagination{
+/* Timer Circle */
+.timer-wrap{
 display:flex;
 justify-content:center;
-align-items:center;
-gap:20px;
-margin:20px;
+margin-top:10px;
+}
+svg{transform:rotate(-90deg);}
+circle{
+fill:none;
+stroke:#00f2ff;
+stroke-width:6;
+stroke-dasharray:440;
+stroke-linecap:round;
+transition:1s linear;
 }
 
-.page-btn{
-background:#ff4d4d;
-color:white;
-border:none;
-padding:10px 15px;
-border-radius:10px;
-font-weight:bold;
+#period{
+text-align:center;
+margin-top:15px;
+opacity:0.6;
+font-size:14px;
+}
+
+/* History */
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+font-size:14px;
+}
+th{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.15);
+color:#00f2ff;
+}
+td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.05);
+text-align:center;
+}
+
+.footer{
+margin-top:80px;
+text-align:center;
+opacity:0.3;
+font-size:12px;
 }
 
 </style>
 </head>
-
 <body>
 
-<div class="header">REDVAULT SIGNAL</div>
+<canvas id="particles"></canvas>
 
-<div class="toggle">
-<div class="big-btn">Big</div>
-<div class="small-btn">Small</div>
+<div class="container">
+
+<h1>OBSIDIAN X</h1>
+<div class="subtitle">QUANTUM SIGNAL ENGINE</div>
+
+<!-- Bet Suggestion -->
+<div class="card">
+<div style="opacity:0.6;font-size:13px;text-align:center;">LIVE BET SUGGESTION</div>
+<div id="betBox" class="bet-hero">Loading...</div>
+
+<div class="timer-wrap">
+<svg width="160" height="160">
+<circle r="70" cx="80" cy="80" id="circle"></circle>
+</svg>
 </div>
 
-<div class="tabs">
-<div class="tab active">Game History</div>
-<div class="tab">Chart</div>
-<div class="tab">Strategy</div>
+<div id="period"></div>
 </div>
 
-<div class="table-container">
+<!-- History -->
+<div class="card">
+<h3 style="text-align:center;margin-bottom:15px;">Last 10 History</h3>
 <table>
 <thead>
 <tr>
 <th>Period</th>
-<th>Number</th>
-<th>Big Small</th>
+<th>Result</th>
 <th>Color</th>
 </tr>
 </thead>
-<tbody id="historyTable">
-</tbody>
+<tbody id="historyTable"></tbody>
 </table>
 </div>
 
-<div class="pagination">
-<button class="page-btn">‹</button>
-<div>1 / 50</div>
-<button class="page-btn">›</button>
+<div class="footer">
+© 2026 Obsidian X Quantum System
+</div>
+
 </div>
 
 <script>
 
-let historyData=[];
-let periodBase=2026030100000;
-let counter=0;
+/* Floating Particles */
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-function generate(){
+let particles = [];
+for(let i=0;i<80;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*2,
+d:Math.random()*1
+});
+}
 
-counter++;
-let period=periodBase+counter;
+function drawParticles(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="rgba(0,242,255,0.5)";
+particles.forEach(p=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2,true);
+ctx.fill();
+});
+updateParticles();
+}
 
-let number=Math.floor(Math.random()*10);
-let size=number>=5?"Big":"Small";
-let color=number%2==0?"green":"red";
+function updateParticles(){
+particles.forEach(p=>{
+p.y+=p.d;
+if(p.y>canvas.height){p.y=0;}
+});
+}
 
-let row={
-period,number,size,color
-};
+setInterval(drawParticles,30);
 
-historyData.unshift(row);
-historyData=historyData.slice(0,10);
+/* Signal Logic */
+let basePeriod=70000;
+let startTime=new Date("2024-01-01T00:00:00").getTime();
+let history=JSON.parse(localStorage.getItem("obsidianX"))||[];
+let currentPeriod=null;
+
+function getCurrentPeriod(){
+let now=Date.now();
+let minutes=Math.floor((now-startTime)/60000);
+return basePeriod+minutes;
+}
+
+function getSecondsLeft(){
+let now=Date.now();
+let seconds=Math.floor((now-startTime)/1000);
+return 60-(seconds%60);
+}
+
+function generate(period){
+let number=period%10;
+let size=number>=5?"BIG":"SMALL";
+let color=number%2==0?"GREEN":"RED";
+return{period,size,color};
+}
+
+function update(){
+
+let period=getCurrentPeriod();
+let seconds=getSecondsLeft();
+document.getElementById("period").innerHTML="Period: "+period;
+
+let circle=document.getElementById("circle");
+circle.style.strokeDashoffset=440*(seconds/60);
+
+if(currentPeriod!==period){
+
+currentPeriod=period;
+let data=generate(period);
+
+history.unshift(data);
+history=history.slice(0,10);
+localStorage.setItem("obsidianX",JSON.stringify(history));
+
+let bet=document.getElementById("betBox");
+bet.classList.remove("reveal");
+setTimeout(()=>{
+bet.innerHTML=`<span class="${data.size.toLowerCase()}">${data.size}</span> - 
+<span class="${data.color.toLowerCase()}">${data.color}</span>`;
+bet.classList.add("reveal");
+},200);
+
 render();
+}
 }
 
 function render(){
-
 let html="";
-historyData.forEach(r=>{
+history.forEach(r=>{
 html+=`
 <tr>
 <td>${r.period}</td>
-<td class="number ${r.color}">${r.number}</td>
-<td>${r.size}</td>
-<td><span class="dot ${r.color}"></span></td>
+<td class="${r.size.toLowerCase()}">${r.size}</td>
+<td class="${r.color.toLowerCase()}">${r.color}</td>
 </tr>`;
 });
-
 document.getElementById("historyTable").innerHTML=html;
 }
 
-setInterval(generate,5000);
-generate();
+setInterval(update,1000);
+render();
+update();
 
 </script>
 
