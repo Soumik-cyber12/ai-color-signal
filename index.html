@@ -2,73 +2,126 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Obsidian X — Precision Sync</title>
+<title>Obsidian X — Live Engine</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
-body{background:#050816;color:white;overflow-x:hidden;}
-canvas{position:fixed;top:0;left:0;z-index:-1;}
-
-.container{max-width:520px;margin:auto;padding:25px;}
-
-h1{
-text-align:center;margin-top:40px;font-size:28px;letter-spacing:2px;
-background:linear-gradient(90deg,#00f2ff,#8b5cf6);
--webkit-background-clip:text;-webkit-text-fill-color:transparent;
+body{
+background:#050816;
+color:white;
+overflow-x:hidden;
 }
 
-.subtitle{text-align:center;opacity:0.4;margin-top:5px;font-size:12px;}
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+.container{
+max-width:520px;
+margin:auto;
+padding:25px;
+}
+
+h1{
+text-align:center;
+margin-top:40px;
+font-size:28px;
+background:linear-gradient(90deg,#00f2ff,#8b5cf6);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
 
 .card{
-margin-top:35px;padding:30px;border-radius:20px;
+margin-top:35px;
+padding:30px;
+border-radius:20px;
 background:rgba(255,255,255,0.05);
 backdrop-filter:blur(30px);
 border:1px solid rgba(255,255,255,0.08);
 box-shadow:0 0 50px rgba(0,0,0,0.8);
 }
 
-.bet-hero{
-text-align:center;font-size:40px;font-weight:bold;
-margin-top:20px;opacity:0;transform:scale(0.85);
-transition:0.5s ease;white-space:nowrap;
+.bet{
+text-align:center;
+font-size:42px;
+font-weight:bold;
+margin-top:20px;
+opacity:0;
+transform:scale(0.9);
+transition:0.4s ease;
+white-space:nowrap;
 }
 
-.reveal{opacity:1;transform:scale(1);}
-.size-text{color:white;font-weight:bold;}
-.green{color:#22c55e;}
-.red{color:#ef4444;}
-
-.countdown-box{margin-top:25px;text-align:center;}
-
-#countdownText{
-font-size:28px;font-weight:bold;margin-bottom:10px;
-letter-spacing:2px;color:#00f2ff;transition:0.3s;
+.show{
+opacity:1;
+transform:scale(1);
 }
 
-.progress-bar{
-width:100%;height:8px;
+.size{
+color:white;
+}
+
+.green{
+color:#22c55e;
+}
+
+.red{
+color:#ef4444;
+}
+
+#countdown{
+text-align:center;
+font-size:28px;
+margin-top:20px;
+color:#00f2ff;
+}
+
+.progress{
+height:8px;
+margin-top:12px;
+border-radius:10px;
 background:rgba(255,255,255,0.1);
-border-radius:10px;overflow:hidden;
+overflow:hidden;
 }
 
-#progressFill{
-height:100%;width:100%;
+.fill{
+height:100%;
 background:linear-gradient(90deg,#00f2ff,#8b5cf6);
-transition:1s linear;border-radius:10px;
+width:100%;
+transition:1s linear;
 }
 
-.pulse{animation:pulseAnim 0.7s infinite alternate;}
-@keyframes pulseAnim{from{opacity:1;}to{opacity:0.5;}}
+.period{
+text-align:center;
+margin-top:15px;
+opacity:0.6;
+font-size:14px;
+}
 
-#period{text-align:center;margin-top:15px;opacity:0.6;font-size:14px;}
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+font-size:14px;
+}
 
-table{width:100%;margin-top:20px;border-collapse:collapse;font-size:14px;}
-th{padding:12px;border-bottom:1px solid rgba(255,255,255,0.15);color:#00f2ff;}
-td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:center;}
+th{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.15);
+color:#00f2ff;
+}
 
-.footer{margin-top:80px;text-align:center;opacity:0.3;font-size:12px;}
+td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.05);
+text-align:center;
+}
 </style>
 </head>
+
 <body>
 
 <canvas id="particles"></canvas>
@@ -76,27 +129,29 @@ td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:center
 <div class="container">
 
 <h1>OBSIDIAN X</h1>
-<div class="subtitle">PRECISION REAL SYNC</div>
 
 <div class="card">
-<div style="opacity:0.6;font-size:13px;text-align:center;">
-LIVE BET SUGGESTION
+
+<div style="opacity:0.6;text-align:center;">LIVE BET SUGGESTION</div>
+
+<div id="result" class="bet">Loading...</div>
+
+<div id="countdown">00:60</div>
+
+<div class="progress">
+<div id="bar" class="fill"></div>
 </div>
 
-<div id="betBox" class="bet-hero">Loading...</div>
-
-<div class="countdown-box">
-<div id="countdownText">00:60</div>
-<div class="progress-bar">
-<div id="progressFill"></div>
-</div>
+<div class="period">
+Period: <span id="period"></span>
 </div>
 
-<div id="period"></div>
 </div>
 
 <div class="card">
+
 <h3 style="text-align:center;margin-bottom:15px;">Last 10 History</h3>
+
 <table>
 <thead>
 <tr>
@@ -105,26 +160,24 @@ LIVE BET SUGGESTION
 <th>Color</th>
 </tr>
 </thead>
-<tbody id="historyTable"></tbody>
+<tbody id="history"></tbody>
 </table>
-</div>
 
-<div class="footer">
-© 2026 Obsidian X Precision Core
 </div>
 
 </div>
 
 <script>
 
-/* Floating Particles */
+/* ================= PARTICLES ================= */
+
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
 let particles=[];
-for(let i=0;i<80;i++){
+for(let i=0;i<70;i++){
 particles.push({
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
@@ -133,12 +186,12 @@ d:Math.random()*1
 });
 }
 
-function drawParticles(){
+function draw(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle="rgba(0,242,255,0.5)";
 particles.forEach(p=>{
 ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2,true);
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
 ctx.fill();
 });
 particles.forEach(p=>{
@@ -146,95 +199,99 @@ p.y+=p.d;
 if(p.y>canvas.height)p.y=0;
 });
 }
-setInterval(drawParticles,30);
+setInterval(draw,30);
 
-/* ===== CORRECT OFFSET SYNC ===== */
 
-/* Round started approx 02:35:28 with period 11267 */
-const baseTime=new Date("2026-02-28T02:35:28").getTime();
-const baseCounter=11267;
-const datePrefix="202602281000";
+/* ================= WIN GO 1 MIN SYNC ================= */
 
-let history=JSON.parse(localStorage.getItem("obsidianSync"))||[];
-let currentPeriod=null;
+/* CHANGE THESE 3 VALUES ACCORDING TO CURRENT OBSERVATION */
+const baseHour = 2;        // current hour observed
+const baseMinute = 54;     // current minute observed
+const baseCounter = 11285; // period counter at that minute
+const datePrefix = "202602281000";
 
 function getCurrentPeriod(){
-const now=Date.now();
-const minutesPassed=Math.floor((now-baseTime)/60000);
-const currentCounter=baseCounter+minutesPassed;
-return datePrefix+currentCounter;
+
+const now = new Date();
+
+const currentTotalMinutes = now.getHours()*60 + now.getMinutes();
+const baseTotalMinutes = baseHour*60 + baseMinute;
+
+const diff = currentTotalMinutes - baseTotalMinutes;
+
+const currentCounter = baseCounter + diff;
+
+return datePrefix + currentCounter;
 }
 
-function getSecondsLeft(){
-const now=Date.now();
-const seconds=Math.floor((now-baseTime)/1000);
-return 60-(seconds%60);
-}
 
-function generate(period){
-let number=parseInt(period.slice(-1));
-let size=number>=5?"BIG":"SMALL";
-let color=number%2==0?"GREEN":"RED";
-return{period,size,color};
+/* ================= RESULT ENGINE ================= */
+
+let historyData = JSON.parse(localStorage.getItem("obsidianHistory")) || [];
+let lastPeriod = null;
+
+function generateResult(period){
+
+let lastDigit = parseInt(period.slice(-1));
+
+let size = lastDigit >=5 ? "BIG":"SMALL";
+let color = lastDigit%2===0 ? "GREEN":"RED";
+
+return {period,size,color};
+
 }
 
 function update(){
 
-let period=getCurrentPeriod();
-let seconds=getSecondsLeft();
+let now = new Date();
 
-document.getElementById("period").innerHTML="Period: "+period;
+let secondsLeft = 60 - now.getSeconds();
 
-/* Countdown */
-let sec=seconds.toString().padStart(2,'0');
-document.getElementById("countdownText").innerHTML="00:"+sec;
+document.getElementById("countdown").innerHTML="00:"+secondsLeft.toString().padStart(2,"0");
+document.getElementById("bar").style.width=(secondsLeft/60)*100+"%";
 
-let percent=(seconds/60)*100;
-document.getElementById("progressFill").style.width=percent+"%";
+let currentPeriod = getCurrentPeriod();
 
-if(seconds<=5){
-document.getElementById("countdownText").classList.add("pulse");
-}else{
-document.getElementById("countdownText").classList.remove("pulse");
-}
+document.getElementById("period").innerText=currentPeriod;
 
-if(currentPeriod!==period){
+if(lastPeriod!==currentPeriod){
 
-currentPeriod=period;
-let data=generate(period);
+lastPeriod=currentPeriod;
 
-if(!history.length||history[0].period!==period){
-history.unshift(data);
-history=history.slice(0,10);
-localStorage.setItem("obsidianSync",JSON.stringify(history));
-}
+let data=generateResult(currentPeriod);
 
-let bet=document.getElementById("betBox");
-bet.classList.remove("reveal");
+historyData.unshift(data);
+historyData=historyData.slice(0,10);
+
+localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
+
+let box=document.getElementById("result");
+box.classList.remove("show");
 
 setTimeout(()=>{
-bet.innerHTML=`
-<span class="size-text">${data.size}</span> -
-<span class="${data.color.toLowerCase()}">${data.color}</span>
-`;
-bet.classList.add("reveal");
+box.innerHTML=`<span class="size">${data.size}</span> - <span class="${data.color.toLowerCase()}">${data.color}</span>`;
+box.classList.add("show");
 },200);
 
 render();
 }
+
 }
 
 function render(){
+
 let html="";
-history.forEach(r=>{
+historyData.forEach(r=>{
 html+=`
 <tr>
 <td>${r.period}</td>
-<td class="size-text">${r.size}</td>
+<td class="size">${r.size}</td>
 <td class="${r.color.toLowerCase()}">${r.color}</td>
 </tr>`;
 });
-document.getElementById("historyTable").innerHTML=html;
+
+document.getElementById("history").innerHTML=html;
+
 }
 
 setInterval(update,1000);
