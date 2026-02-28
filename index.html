@@ -2,47 +2,66 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Obsidian X — Stable Engine</title>
+<title>Obsidian X — Quantum Engine</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
-body{background:#050816;color:white;overflow-x:hidden;}
 
-.container{max-width:520px;margin:auto;padding:25px;}
+body{
+background:#030712;
+color:white;
+overflow-x:hidden;
+}
 
+/* Animated Gradient Logo */
 h1{
 text-align:center;
 margin-top:40px;
-font-size:28px;
-background:linear-gradient(90deg,#00f2ff,#8b5cf6);
+font-size:32px;
+background:linear-gradient(270deg,#00f2ff,#8b5cf6,#22c55e,#00f2ff);
+background-size:600% 600%;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+animation:gradientMove 8s ease infinite;
+letter-spacing:2px;
+}
+
+@keyframes gradientMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+.container{
+max-width:520px;
+margin:auto;
+padding:25px;
 }
 
 .card{
 margin-top:35px;
 padding:30px;
-border-radius:20px;
+border-radius:25px;
 background:rgba(255,255,255,0.05);
 backdrop-filter:blur(30px);
 border:1px solid rgba(255,255,255,0.08);
-box-shadow:0 0 50px rgba(0,0,0,0.8);
+box-shadow:0 0 60px rgba(0,0,0,0.9);
+transition:0.3s;
 }
 
 .bet{
 text-align:center;
-font-size:42px;
+font-size:44px;
 font-weight:bold;
 margin-top:20px;
-opacity:0;
-transform:scale(0.9);
-transition:0.4s ease;
-white-space:nowrap;
-}
-
-.show{
-opacity:1;
-transform:scale(1);
+transition:0.4s;
 }
 
 .size{color:white;}
@@ -51,9 +70,25 @@ transform:scale(1);
 
 #countdown{
 text-align:center;
-font-size:28px;
+font-size:30px;
 margin-top:20px;
 color:#00f2ff;
+transition:0.3s;
+}
+
+.flash{
+animation:flash 0.5s ease;
+}
+
+@keyframes flash{
+0%{opacity:1;}
+50%{opacity:0;}
+100%{opacity:1;}
+}
+
+.warning{
+text-shadow:0 0 20px red;
+color:red !important;
 }
 
 .progress{
@@ -101,6 +136,8 @@ text-align:center;
 
 <body>
 
+<canvas id="particles"></canvas>
+
 <div class="container">
 
 <h1>OBSIDIAN X</h1>
@@ -119,6 +156,7 @@ text-align:center;
 <div class="period">
 Period: <span id="period"></span>
 </div>
+
 </div>
 
 <div class="card">
@@ -140,80 +178,111 @@ Period: <span id="period"></span>
 
 <script>
 
-/* ================= WIN GO 1 MIN SYNC ================= */
+/* ================= PARTICLES ================= */
 
-const baseHour = 2;        // change if needed
-const baseMinute = 54;     // change if needed
-const baseCounter = 11285; // change if needed
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+for(let i=0;i<80;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*2,
+d:Math.random()*0.6
+});
+}
+
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="rgba(0,242,255,0.4)";
+particles.forEach(p=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+});
+particles.forEach(p=>{
+p.y+=p.d;
+if(p.y>canvas.height)p.y=0;
+});
+}
+setInterval(draw,30);
+
+/* ================= PERIOD SYNC ================= */
+
+const baseHour = 2;
+const baseMinute = 54;
+const baseCounter = 11285;
 const datePrefix = "202602281000";
 
 function getCurrentPeriod(){
-const now = new Date();
-const currentTotalMinutes = now.getHours()*60 + now.getMinutes();
-const baseTotalMinutes = baseHour*60 + baseMinute;
-const diff = currentTotalMinutes - baseTotalMinutes;
-const currentCounter = baseCounter + diff;
-return datePrefix + currentCounter;
+const now=new Date();
+const currentTotalMinutes=now.getHours()*60+now.getMinutes();
+const baseTotalMinutes=baseHour*60+baseMinute;
+const diff=currentTotalMinutes-baseTotalMinutes;
+return datePrefix+(baseCounter+diff);
 }
 
-/* ================= RANDOM ENGINE ================= */
+/* ================= ENGINE ================= */
 
 let historyData = JSON.parse(localStorage.getItem("obsidianHistory")) || [];
-
-/* IMPORTANT FIX — prevent duplicate on refresh */
-let lastPeriod = historyData.length > 0 ? historyData[0].period : null;
+let currentPeriod = getCurrentPeriod();
+let currentResult = null;
 
 function generateRandomResult(){
-let size = Math.random() < 0.5 ? "BIG" : "SMALL";
-let color = Math.random() < 0.5 ? "GREEN" : "RED";
-return {size,color};
+return {
+size: Math.random()<0.5?"BIG":"SMALL",
+color: Math.random()<0.5?"GREEN":"RED"
+};
 }
 
 function update(){
 
-let now = new Date();
-let secondsLeft = 60 - now.getSeconds();
+let now=new Date();
+let secondsLeft=60-now.getSeconds();
 
-document.getElementById("countdown").innerHTML="00:"+secondsLeft.toString().padStart(2,"0");
+let countdown=document.getElementById("countdown");
+countdown.innerHTML="00:"+secondsLeft.toString().padStart(2,"0");
+
 document.getElementById("bar").style.width=(secondsLeft/60)*100+"%";
 
-let currentPeriod = getCurrentPeriod();
-document.getElementById("period").innerText=currentPeriod;
+document.getElementById("period").innerText=getCurrentPeriod();
 
-if(lastPeriod !== currentPeriod){
-
-lastPeriod = currentPeriod;
-
-/* Check if this period already stored (refresh safety) */
-let already = historyData.find(h => h.period === currentPeriod);
-
-let data;
-
-if(already){
-data = already;
+/* Last 5 sec glow */
+if(secondsLeft<=5){
+countdown.classList.add("warning");
 }else{
-let random = generateRandomResult();
-data = {
-period: currentPeriod,
-size: random.size,
-color: random.color
-};
+countdown.classList.remove("warning");
+}
 
-historyData.unshift(data);
-historyData = historyData.slice(0,10);
+/* At 00 second (new minute) */
+if(secondsLeft===60){
+countdown.classList.add("flash");
+
+if(currentResult){
+historyData.unshift({
+period: currentPeriod,
+size: currentResult.size,
+color: currentResult.color
+});
+historyData=historyData.slice(0,10);
 localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
 }
 
-let box=document.getElementById("result");
-box.classList.remove("show");
+currentPeriod=getCurrentPeriod();
+currentResult=generateRandomResult();
+}
 
-setTimeout(()=>{
-box.innerHTML=`<span class="size">${data.size}</span> - <span class="${data.color.toLowerCase()}">${data.color}</span>`;
-box.classList.add("show");
-},200);
+if(!currentResult){
+currentResult=generateRandomResult();
+}
+
+let box=document.getElementById("result");
+box.innerHTML=`<span class="size">${currentResult.size}</span> - <span class="${currentResult.color.toLowerCase()}">${currentResult.color}</span>`;
 
 render();
-}
 }
 
 function render(){
