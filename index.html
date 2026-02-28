@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Obsidian X — Live Synced Engine</title>
+<title>Obsidian X — Precision Sync</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
@@ -58,11 +58,7 @@ transition:1s linear;border-radius:10px;
 }
 
 .pulse{animation:pulseAnim 0.7s infinite alternate;}
-
-@keyframes pulseAnim{
-from{opacity:1;}
-to{opacity:0.5;}
-}
+@keyframes pulseAnim{from{opacity:1;}to{opacity:0.5;}}
 
 #period{text-align:center;margin-top:15px;opacity:0.6;font-size:14px;}
 
@@ -80,7 +76,7 @@ td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:center
 <div class="container">
 
 <h1>OBSIDIAN X</h1>
-<div class="subtitle">LIVE REAL SYNC ENGINE</div>
+<div class="subtitle">PRECISION REAL SYNC</div>
 
 <div class="card">
 <div style="opacity:0.6;font-size:13px;text-align:center;">
@@ -114,7 +110,7 @@ LIVE BET SUGGESTION
 </div>
 
 <div class="footer">
-© 2026 Obsidian X Synced Core
+© 2026 Obsidian X Precision Core
 </div>
 
 </div>
@@ -152,9 +148,11 @@ if(p.y>canvas.height)p.y=0;
 }
 setInterval(drawParticles,30);
 
-/* ===== NEW SYNC SETTINGS ===== */
-const baseTime=new Date("2026-02-28T02:31:00").getTime();
-const baseCounter=11262;
+/* ===== CORRECT OFFSET SYNC ===== */
+
+/* Round started approx 02:35:28 with period 11267 */
+const baseTime=new Date("2026-02-28T02:35:28").getTime();
+const baseCounter=11267;
 const datePrefix="202602281000";
 
 let history=JSON.parse(localStorage.getItem("obsidianSync"))||[];
