@@ -6,13 +6,13 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+
 body{
 background:#050816;
 color:white;
 overflow-x:hidden;
 }
 
-/* Floating particles canvas */
 canvas{
 position:fixed;
 top:0;
@@ -20,14 +20,12 @@ left:0;
 z-index:-1;
 }
 
-/* Container */
 .container{
 max-width:520px;
 margin:auto;
 padding:25px;
 }
 
-/* Heading */
 h1{
 text-align:center;
 margin-top:40px;
@@ -37,6 +35,7 @@ background:linear-gradient(90deg,#00f2ff,#8b5cf6);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
+
 .subtitle{
 text-align:center;
 opacity:0.4;
@@ -44,7 +43,6 @@ margin-top:5px;
 font-size:12px;
 }
 
-/* Glass Card */
 .card{
 margin-top:35px;
 padding:30px;
@@ -53,36 +51,42 @@ background:rgba(255,255,255,0.05);
 backdrop-filter:blur(30px);
 border:1px solid rgba(255,255,255,0.08);
 box-shadow:0 0 50px rgba(0,0,0,0.8);
-transition:0.4s;
 }
 
-/* Hero Bet Panel */
+/* Bet panel */
 .bet-hero{
 text-align:center;
 font-size:40px;
 font-weight:bold;
 margin-top:20px;
 opacity:0;
-transform:scale(0.8);
+transform:scale(0.85);
 transition:0.5s ease;
+white-space:nowrap;
 }
+
 .reveal{
 opacity:1;
 transform:scale(1);
 }
 
-.big{color:#3b82f6;}
-.small{color:#a855f7;}
+.size-text{
+color:white;
+font-weight:bold;
+}
+
 .green{color:#22c55e;}
 .red{color:#ef4444;}
 
-/* Timer Circle */
+/* Timer */
 .timer-wrap{
 display:flex;
 justify-content:center;
 margin-top:10px;
 }
+
 svg{transform:rotate(-90deg);}
+
 circle{
 fill:none;
 stroke:#00f2ff;
@@ -106,11 +110,13 @@ margin-top:20px;
 border-collapse:collapse;
 font-size:14px;
 }
+
 th{
 padding:12px;
 border-bottom:1px solid rgba(255,255,255,0.15);
 color:#00f2ff;
 }
+
 td{
 padding:12px;
 border-bottom:1px solid rgba(255,255,255,0.05);
@@ -135,9 +141,9 @@ font-size:12px;
 <h1>OBSIDIAN X</h1>
 <div class="subtitle">QUANTUM SIGNAL ENGINE</div>
 
-<!-- Bet Suggestion -->
 <div class="card">
 <div style="opacity:0.6;font-size:13px;text-align:center;">LIVE BET SUGGESTION</div>
+
 <div id="betBox" class="bet-hero">Loading...</div>
 
 <div class="timer-wrap">
@@ -149,7 +155,6 @@ font-size:12px;
 <div id="period"></div>
 </div>
 
-<!-- History -->
 <div class="card">
 <h3 style="text-align:center;margin-bottom:15px;">Last 10 History</h3>
 <table>
@@ -173,12 +178,12 @@ font-size:12px;
 <script>
 
 /* Floating Particles */
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-let particles = [];
+let particles=[];
 for(let i=0;i<80;i++){
 particles.push({
 x:Math.random()*canvas.width,
@@ -196,13 +201,9 @@ ctx.beginPath();
 ctx.arc(p.x,p.y,p.r,0,Math.PI*2,true);
 ctx.fill();
 });
-updateParticles();
-}
-
-function updateParticles(){
 particles.forEach(p=>{
 p.y+=p.d;
-if(p.y>canvas.height){p.y=0;}
+if(p.y>canvas.height)p.y=0;
 });
 }
 
@@ -237,6 +238,7 @@ function update(){
 
 let period=getCurrentPeriod();
 let seconds=getSecondsLeft();
+
 document.getElementById("period").innerHTML="Period: "+period;
 
 let circle=document.getElementById("circle");
@@ -245,17 +247,24 @@ circle.style.strokeDashoffset=440*(seconds/60);
 if(currentPeriod!==period){
 
 currentPeriod=period;
+
 let data=generate(period);
 
+/* Prevent duplicate on refresh */
+if(!history.length || history[0].period!==period){
 history.unshift(data);
 history=history.slice(0,10);
 localStorage.setItem("obsidianX",JSON.stringify(history));
+}
 
 let bet=document.getElementById("betBox");
 bet.classList.remove("reveal");
+
 setTimeout(()=>{
-bet.innerHTML=`<span class="${data.size.toLowerCase()}">${data.size}</span> - 
-<span class="${data.color.toLowerCase()}">${data.color}</span>`;
+bet.innerHTML=`
+<span class="size-text">${data.size}</span> -
+<span class="${data.color.toLowerCase()}">${data.color}</span>
+`;
 bet.classList.add("reveal");
 },200);
 
@@ -269,7 +278,7 @@ history.forEach(r=>{
 html+=`
 <tr>
 <td>${r.period}</td>
-<td class="${r.size.toLowerCase()}">${r.size}</td>
+<td class="size-text">${r.size}</td>
 <td class="${r.color.toLowerCase()}">${r.color}</td>
 </tr>`;
 });
