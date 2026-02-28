@@ -2,134 +2,86 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Obsidian X — Quantum Signal</title>
+<title>Obsidian X — Synced Engine</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+body{background:#050816;color:white;overflow-x:hidden;}
+canvas{position:fixed;top:0;left:0;z-index:-1;}
 
-body{
-background:#050816;
-color:white;
-overflow-x:hidden;
-}
-
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:-1;
-}
-
-.container{
-max-width:520px;
-margin:auto;
-padding:25px;
-}
+.container{max-width:520px;margin:auto;padding:25px;}
 
 h1{
-text-align:center;
-margin-top:40px;
-font-size:28px;
-letter-spacing:2px;
+text-align:center;margin-top:40px;font-size:28px;letter-spacing:2px;
 background:linear-gradient(90deg,#00f2ff,#8b5cf6);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
 
-.subtitle{
-text-align:center;
-opacity:0.4;
-margin-top:5px;
-font-size:12px;
-}
+.subtitle{text-align:center;opacity:0.4;margin-top:5px;font-size:12px;}
 
 .card{
-margin-top:35px;
-padding:30px;
-border-radius:20px;
+margin-top:35px;padding:30px;border-radius:20px;
 background:rgba(255,255,255,0.05);
 backdrop-filter:blur(30px);
 border:1px solid rgba(255,255,255,0.08);
 box-shadow:0 0 50px rgba(0,0,0,0.8);
 }
 
-/* Bet panel */
+/* BET PANEL */
 .bet-hero{
-text-align:center;
-font-size:40px;
-font-weight:bold;
-margin-top:20px;
-opacity:0;
-transform:scale(0.85);
-transition:0.5s ease;
-white-space:nowrap;
+text-align:center;font-size:40px;font-weight:bold;
+margin-top:20px;opacity:0;transform:scale(0.85);
+transition:0.5s ease;white-space:nowrap;
 }
-
-.reveal{
-opacity:1;
-transform:scale(1);
-}
-
-.size-text{
-color:white;
-font-weight:bold;
-}
-
+.reveal{opacity:1;transform:scale(1);}
+.size-text{color:white;font-weight:bold;}
 .green{color:#22c55e;}
 .red{color:#ef4444;}
 
-/* Timer */
-.timer-wrap{
-display:flex;
-justify-content:center;
-margin-top:10px;
-}
+/* COUNTDOWN BAR */
+.countdown-box{margin-top:25px;text-align:center;}
 
-svg{transform:rotate(-90deg);}
-
-circle{
-fill:none;
-stroke:#00f2ff;
-stroke-width:6;
-stroke-dasharray:440;
-stroke-linecap:round;
-transition:1s linear;
-}
-
-#period{
-text-align:center;
-margin-top:15px;
-opacity:0.6;
-font-size:14px;
-}
-
-/* History */
-table{
-width:100%;
-margin-top:20px;
-border-collapse:collapse;
-font-size:14px;
-}
-
-th{
-padding:12px;
-border-bottom:1px solid rgba(255,255,255,0.15);
+#countdownText{
+font-size:28px;
+font-weight:bold;
+margin-bottom:10px;
+letter-spacing:2px;
 color:#00f2ff;
+transition:0.3s;
 }
 
-td{
-padding:12px;
-border-bottom:1px solid rgba(255,255,255,0.05);
-text-align:center;
+.progress-bar{
+width:100%;
+height:8px;
+background:rgba(255,255,255,0.1);
+border-radius:10px;
+overflow:hidden;
 }
 
-.footer{
-margin-top:80px;
-text-align:center;
-opacity:0.3;
-font-size:12px;
+#progressFill{
+height:100%;
+width:100%;
+background:linear-gradient(90deg,#00f2ff,#8b5cf6);
+transition:1s linear;
+border-radius:10px;
 }
 
+.pulse{
+animation:pulseAnim 0.7s infinite alternate;
+}
+
+@keyframes pulseAnim{
+from{opacity:1;}
+to{opacity:0.5;}
+}
+
+#period{text-align:center;margin-top:15px;opacity:0.6;font-size:14px;}
+
+table{width:100%;margin-top:20px;border-collapse:collapse;font-size:14px;}
+th{padding:12px;border-bottom:1px solid rgba(255,255,255,0.15);color:#00f2ff;}
+td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:center;}
+
+.footer{margin-top:80px;text-align:center;opacity:0.3;font-size:12px;}
 </style>
 </head>
 <body>
@@ -139,17 +91,20 @@ font-size:12px;
 <div class="container">
 
 <h1>OBSIDIAN X</h1>
-<div class="subtitle">QUANTUM SIGNAL ENGINE</div>
+<div class="subtitle">REAL TIME SYNCED ENGINE</div>
 
 <div class="card">
-<div style="opacity:0.6;font-size:13px;text-align:center;">LIVE BET SUGGESTION</div>
+<div style="opacity:0.6;font-size:13px;text-align:center;">
+LIVE BET SUGGESTION
+</div>
 
 <div id="betBox" class="bet-hero">Loading...</div>
 
-<div class="timer-wrap">
-<svg width="160" height="160">
-<circle r="70" cx="80" cy="80" id="circle"></circle>
-</svg>
+<div class="countdown-box">
+<div id="countdownText">00:60</div>
+<div class="progress-bar">
+<div id="progressFill"></div>
+</div>
 </div>
 
 <div id="period"></div>
@@ -170,7 +125,7 @@ font-size:12px;
 </div>
 
 <div class="footer">
-© 2026 Obsidian X Quantum System
+© 2026 Obsidian X Synced System
 </div>
 
 </div>
@@ -206,29 +161,31 @@ p.y+=p.d;
 if(p.y>canvas.height)p.y=0;
 });
 }
-
 setInterval(drawParticles,30);
 
-/* Signal Logic */
-let basePeriod=70000;
-let startTime=new Date("2024-01-01T00:00:00").getTime();
-let history=JSON.parse(localStorage.getItem("obsidianX"))||[];
+/* SYNC SETTINGS */
+const baseTime=new Date("2026-02-28T02:25:00").getTime();
+const baseCounter=11256;
+const datePrefix="202602281000";
+
+let history=JSON.parse(localStorage.getItem("obsidianSync"))||[];
 let currentPeriod=null;
 
 function getCurrentPeriod(){
-let now=Date.now();
-let minutes=Math.floor((now-startTime)/60000);
-return basePeriod+minutes;
+const now=Date.now();
+const minutesPassed=Math.floor((now-baseTime)/60000);
+const currentCounter=baseCounter+minutesPassed;
+return datePrefix+currentCounter;
 }
 
 function getSecondsLeft(){
-let now=Date.now();
-let seconds=Math.floor((now-startTime)/1000);
+const now=Date.now();
+const seconds=Math.floor((now-baseTime)/1000);
 return 60-(seconds%60);
 }
 
 function generate(period){
-let number=period%10;
+let number=parseInt(period.slice(-1));
 let size=number>=5?"BIG":"SMALL";
 let color=number%2==0?"GREEN":"RED";
 return{period,size,color};
@@ -241,20 +198,28 @@ let seconds=getSecondsLeft();
 
 document.getElementById("period").innerHTML="Period: "+period;
 
-let circle=document.getElementById("circle");
-circle.style.strokeDashoffset=440*(seconds/60);
+/* Countdown update */
+let sec=seconds.toString().padStart(2,'0');
+document.getElementById("countdownText").innerHTML="00:"+sec;
+
+let percent=(seconds/60)*100;
+document.getElementById("progressFill").style.width=percent+"%";
+
+if(seconds<=5){
+document.getElementById("countdownText").classList.add("pulse");
+}else{
+document.getElementById("countdownText").classList.remove("pulse");
+}
 
 if(currentPeriod!==period){
 
 currentPeriod=period;
-
 let data=generate(period);
 
-/* Prevent duplicate on refresh */
-if(!history.length || history[0].period!==period){
+if(!history.length||history[0].period!==period){
 history.unshift(data);
 history=history.slice(0,10);
-localStorage.setItem("obsidianX",JSON.stringify(history));
+localStorage.setItem("obsidianSync",JSON.stringify(history));
 }
 
 let bet=document.getElementById("betBox");
