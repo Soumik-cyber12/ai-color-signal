@@ -21,14 +21,14 @@ max-width:420px;
 backdrop-filter:blur(20px);
 }
 #result{
-font-size:32px;
+font-size:28px;
 font-weight:bold;
 margin:15px 0;
 }
 .green{color:#22c55e;}
 .red{color:#ef4444;}
 #period{
-opacity:0.7;
+opacity:0.6;
 margin-top:10px;
 }
 #countdown{
@@ -46,73 +46,59 @@ margin-top:10px;
 <div class="card">
 <div>LIVE RESULT</div>
 <div id="result">Loading...</div>
-<div id="countdown">Syncing...</div>
+<div id="countdown"></div>
 <div id="period"></div>
 </div>
 
 <script>
 
-/* ===== WORLD TIME AUTO SYNC ENGINE ===== */
-
-/* 
-   CURRENT REAL PERIOD:
-   20260228100011322
-*/
+/* ===== BASE SETTINGS ===== */
 
 const BASE_COUNTER = 11322;
 
-let baseUTCMinutes = null;
+/* 
+  Base time jab tumne diya tha:
+  3:28 AM
+*/
 
-async function init(){
+const BASE_HOUR = 3;
+const BASE_MIN = 28;
 
-    const res = await fetch("https://worldtimeapi.org/api/ip");
-    const data = await res.json();
+/* ===== ENGINE ===== */
 
-    const utcNow = new Date(data.utc_datetime);
+function update(){
 
-    baseUTCMinutes = Math.floor(utcNow.getTime()/60000);
+    const now = new Date();
 
-    update(utcNow);
-    setInterval(updateLoop,1000);
-}
+    const totalNow = now.getHours()*60 + now.getMinutes();
+    const totalBase = BASE_HOUR*60 + BASE_MIN;
 
-function updateLoop(){
-    const nowUTC = new Date(new Date().toISOString());
-    update(nowUTC);
-}
+    const diff = totalNow - totalBase;
 
-function update(now){
+    const counter = BASE_COUNTER + diff;
 
-    if(baseUTCMinutes === null) return;
-
-    const currentUTCMinutes = Math.floor(now.getTime()/60000);
-
-    const diffMinutes = currentUTCMinutes - baseUTCMinutes;
-
-    const counter = BASE_COUNTER + diffMinutes;
-
-    const secondsLeft = 60 - now.getUTCSeconds();
-
-    const yyyy = now.getUTCFullYear();
-    const mm = String(now.getUTCMonth()+1).padStart(2,'0');
-    const dd = String(now.getUTCDate()).padStart(2,'0');
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth()+1).padStart(2,'0');
+    const dd = String(now.getDate()).padStart(2,'0');
 
     const period = `${yyyy}${mm}${dd}1000${counter}`;
 
     document.getElementById("period").innerText = "Period: " + period;
-    document.getElementById("countdown").innerText =
-        "00:" + String(secondsLeft).padStart(2,"0");
 
-    /* Stable per-minute result */
+    const secondsLeft = 60 - now.getSeconds();
+    document.getElementById("countdown").innerText =
+        "00:" + String(secondsLeft).padStart(2,'0');
+
     const seed = counter % 2;
-    const size = seed === 0 ? "BIG" : "SMALL";
-    const color = seed === 0 ? "GREEN" : "RED";
+    const size = seed===0 ? "BIG" : "SMALL";
+    const color = seed===0 ? "GREEN" : "RED";
 
     document.getElementById("result").innerHTML =
         `<span>${size}</span> - <span class="${color.toLowerCase()}">${color}</span>`;
 }
 
-init();
+update();
+setInterval(update,1000);
 
 </script>
 
