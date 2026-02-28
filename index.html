@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Obsidian X — Quantum Engine</title>
+<title>Obsidian X — Quantum Core</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
@@ -53,7 +53,6 @@ background:rgba(255,255,255,0.05);
 backdrop-filter:blur(30px);
 border:1px solid rgba(255,255,255,0.08);
 box-shadow:0 0 60px rgba(0,0,0,0.9);
-transition:0.3s;
 }
 
 .bet{
@@ -61,7 +60,7 @@ text-align:center;
 font-size:44px;
 font-weight:bold;
 margin-top:20px;
-transition:0.4s;
+white-space:nowrap; /* FIX 1 LINE RESULT */
 }
 
 .size{color:white;}
@@ -76,6 +75,11 @@ color:#00f2ff;
 transition:0.3s;
 }
 
+.warning{
+color:red !important;
+text-shadow:0 0 20px red;
+}
+
 .flash{
 animation:flash 0.5s ease;
 }
@@ -84,11 +88,6 @@ animation:flash 0.5s ease;
 0%{opacity:1;}
 50%{opacity:0;}
 100%{opacity:1;}
-}
-
-.warning{
-text-shadow:0 0 20px red;
-color:red !important;
 }
 
 .progress{
@@ -156,7 +155,6 @@ text-align:center;
 <div class="period">
 Period: <span id="period"></span>
 </div>
-
 </div>
 
 <div class="card">
@@ -210,6 +208,7 @@ if(p.y>canvas.height)p.y=0;
 }
 setInterval(draw,30);
 
+
 /* ================= PERIOD SYNC ================= */
 
 const baseHour = 2;
@@ -225,11 +224,13 @@ const diff=currentTotalMinutes-baseTotalMinutes;
 return datePrefix+(baseCounter+diff);
 }
 
-/* ================= ENGINE ================= */
+/* ================= STABLE ENGINE ================= */
 
 let historyData = JSON.parse(localStorage.getItem("obsidianHistory")) || [];
 let currentPeriod = getCurrentPeriod();
-let currentResult = null;
+let currentResult = localStorage.getItem("runningResult")
+? JSON.parse(localStorage.getItem("runningResult"))
+: null;
 
 function generateRandomResult(){
 return {
@@ -250,16 +251,17 @@ document.getElementById("bar").style.width=(secondsLeft/60)*100+"%";
 
 document.getElementById("period").innerText=getCurrentPeriod();
 
-/* Last 5 sec glow */
+/* Glow last 5 sec */
 if(secondsLeft<=5){
 countdown.classList.add("warning");
 }else{
 countdown.classList.remove("warning");
 }
 
-/* At 00 second (new minute) */
-if(secondsLeft===60){
-countdown.classList.add("flash");
+/* Minute changed */
+let newPeriod=getCurrentPeriod();
+
+if(newPeriod!==currentPeriod){
 
 if(currentResult){
 historyData.unshift({
@@ -271,16 +273,21 @@ historyData=historyData.slice(0,10);
 localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
 }
 
-currentPeriod=getCurrentPeriod();
+currentPeriod=newPeriod;
 currentResult=generateRandomResult();
+localStorage.setItem("runningResult",JSON.stringify(currentResult));
+
+countdown.classList.add("flash");
 }
 
+/* First load protection */
 if(!currentResult){
 currentResult=generateRandomResult();
+localStorage.setItem("runningResult",JSON.stringify(currentResult));
 }
 
-let box=document.getElementById("result");
-box.innerHTML=`<span class="size">${currentResult.size}</span> - <span class="${currentResult.color.toLowerCase()}">${currentResult.color}</span>`;
+document.getElementById("result").innerHTML=
+`<span class="size">${currentResult.size}</span> - <span class="${currentResult.color.toLowerCase()}">${currentResult.color}</span>`;
 
 render();
 }
