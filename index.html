@@ -2,15 +2,16 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Live Color Signal</title>
+<title>Quantum Color Signal</title>
 
 <style>
 body{
 margin:0;
-background:#0c0f1f;
 font-family: 'Segoe UI', sans-serif;
+background: radial-gradient(circle at top, #111827, #0b0f1a);
 color:white;
 text-align:center;
+overflow-x:hidden;
 }
 
 .container{
@@ -20,51 +21,52 @@ padding:20px;
 }
 
 h1{
-color:#00f2ff;
-margin-top:25px;
-letter-spacing:1px;
-}
-
-.badge{
-background:#00f2ff20;
-border:1px solid #00f2ff;
-color:#00f2ff;
-display:inline-block;
-padding:5px 12px;
-border-radius:20px;
-font-size:12px;
-margin-top:5px;
+margin-top:30px;
+font-size:26px;
+background:linear-gradient(90deg,#00f2ff,#00ff88);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 .card{
-background:#14182b;
-border-radius:15px;
+backdrop-filter: blur(12px);
+background: rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.1);
+border-radius:16px;
 padding:20px;
 margin-top:20px;
-box-shadow:0 0 30px rgba(0,0,0,0.6);
+box-shadow:0 0 40px rgba(0,0,0,0.6);
+animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
 }
 
 #period{
-font-size:14px;
-color:#aaa;
+font-size:13px;
+color:#9ca3af;
 }
 
 #timer{
-font-size:13px;
-color:#888;
-margin-bottom:10px;
+font-size:12px;
+color:#6b7280;
+margin-bottom:12px;
 }
 
 #result{
-font-size:32px;
-margin:15px 0;
+font-size:34px;
 font-weight:bold;
+margin:15px 0;
 opacity:0;
-transition:0.4s;
+transform:scale(0.9);
+transition:all 0.4s ease;
 }
 
-.reveal{
+.show{
 opacity:1 !important;
+transform:scale(1);
 }
 
 .big{color:#3b82f6;}
@@ -73,49 +75,46 @@ opacity:1 !important;
 .red{color:#ef4444;}
 
 button{
-background:linear-gradient(45deg,#00f2ff,#00c3ff);
+background:linear-gradient(90deg,#00f2ff,#00ff88);
 border:none;
-padding:12px 25px;
+padding:12px 28px;
 border-radius:8px;
-cursor:pointer;
-font-size:15px;
+font-size:14px;
 font-weight:bold;
-color:black;
+cursor:pointer;
 transition:0.3s;
+color:#000;
 }
 
 button:hover{
-transform:scale(1.05);
-}
-
-.accuracy{
-margin-top:10px;
-font-size:14px;
-color:#00f2ff;
+transform:translateY(-2px);
+box-shadow:0 0 20px #00f2ff;
 }
 
 table{
 width:100%;
-margin-top:15px;
 border-collapse:collapse;
-}
-
-th,td{
-padding:8px;
+margin-top:15px;
 font-size:13px;
-border-bottom:1px solid #222;
 }
 
 th{
 color:#00f2ff;
+padding:8px;
+border-bottom:1px solid rgba(255,255,255,0.1);
 }
+
+td{
+padding:8px;
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>AI LIVE COLOR SIGNAL</h1>
-<div class="badge">AI Powered Prediction Engine</div>
+<h1>QUANTUM LIVE COLOR</h1>
 
 <div class="container">
 
@@ -124,7 +123,6 @@ color:#00f2ff;
 <div id="timer"></div>
 <div id="result">Waiting...</div>
 <button onclick="showResult()">Reveal Signal</button>
-<div class="accuracy" id="accuracy">Accuracy: 0%</div>
 </div>
 
 <div class="card">
@@ -143,17 +141,12 @@ color:#00f2ff;
 
 </div>
 
-<audio id="ding">
-<source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg">
-</audio>
-
 <script>
 
-let basePeriod = 8000;
+let basePeriod = 10000;
 let startTime = new Date("2024-01-01T00:00:00").getTime();
 
-let history = [];
-let totalRounds = 0;
+let history = JSON.parse(localStorage.getItem("historyData")) || [];
 
 function getCurrentPeriod(){
 let now = new Date().getTime();
@@ -185,18 +178,17 @@ document.getElementById("timer").innerHTML = "Next round in "+secondsLeft+"s";
 if(history.length == 0 || history[0].period != period){
 
 let result = generateResult(period);
-window.currentResult = result;
 
 history.unshift(result);
 history = history.slice(0,10);
-totalRounds++;
 
-updateHistory();
-updateAccuracy();
+localStorage.setItem("historyData",JSON.stringify(history));
 
-document.getElementById("ding").play();
-document.getElementById("result").classList.remove("reveal");
+document.getElementById("result").classList.remove("show");
 document.getElementById("result").innerHTML="Waiting...";
+
+renderHistory();
+window.currentResult = result;
 }
 
 }
@@ -208,11 +200,12 @@ document.getElementById("result").innerHTML =
 ${window.currentResult.size}</span> - 
 <span class="${window.currentResult.color.toLowerCase()}">
 ${window.currentResult.color}</span>`;
-document.getElementById("result").classList.add("reveal");
+
+document.getElementById("result").classList.add("show");
 }
 }
 
-function updateHistory(){
+function renderHistory(){
 
 let html="";
 history.forEach(row=>{
@@ -228,14 +221,8 @@ document.getElementById("historyTable").innerHTML=html;
 
 }
 
-function updateAccuracy(){
-
-let accuracy = Math.min(95, 70 + (totalRounds % 25));
-document.getElementById("accuracy").innerHTML="Accuracy: "+accuracy+"%";
-
-}
-
 setInterval(updateDashboard,1000);
+renderHistory();
 updateDashboard();
 
 </script>
