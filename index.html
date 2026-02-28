@@ -2,134 +2,136 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXORA Quantum Engine</title>
+<title>REDVAULT Signal</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
 
 body{
-background:#0a0f1c;
+background:#f3f4f6;
+}
+
+/* Header */
+.header{
+background:linear-gradient(90deg,#ff5f6d,#ff3d3d);
 color:white;
-overflow-x:hidden;
-}
-
-/* Animated background */
-body::before{
-content:"";
-position:fixed;
-width:200%;
-height:200%;
-background:radial-gradient(circle,#00f2ff15,transparent 60%);
-animation:movebg 20s linear infinite;
-z-index:-1;
-}
-
-@keyframes movebg{
-0%{transform:translate(0,0)}
-50%{transform:translate(-20%, -20%)}
-100%{transform:translate(0,0)}
-}
-
-.container{
-max-width:500px;
-margin:auto;
-padding:20px;
-}
-
-h1{
-margin-top:30px;
+padding:15px;
 text-align:center;
-font-size:26px;
-letter-spacing:2px;
-background:linear-gradient(90deg,#00f2ff,#00ff88);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-/* Card style */
-.card{
-margin-top:30px;
-padding:25px;
-border-radius:18px;
-background:rgba(255,255,255,0.04);
-backdrop-filter:blur(25px);
-border:1px solid rgba(255,255,255,0.08);
-box-shadow:0 0 40px rgba(0,0,0,0.6);
-}
-
-/* Timer Circle */
-.timer-wrapper{
-display:flex;
-justify-content:center;
-margin-top:20px;
-}
-
-circle{
-fill:none;
-stroke:#00f2ff;
-stroke-width:6;
-stroke-dasharray:440;
-stroke-dashoffset:0;
-transition:1s linear;
-}
-
-#period{
-text-align:center;
-font-size:14px;
-margin-top:10px;
-opacity:0.7;
-}
-
-#result{
-text-align:center;
-font-size:34px;
-margin-top:25px;
 font-weight:bold;
-transform:scale(0.8);
-opacity:0;
-transition:0.4s ease;
+font-size:20px;
+letter-spacing:1px;
 }
 
-.reveal{
-transform:scale(1);
-opacity:1;
+/* Toggle */
+.toggle{
+margin:20px;
+display:flex;
+border-radius:30px;
+overflow:hidden;
+background:#ddd;
 }
 
-.green{color:#22c55e;}
-.red{color:#ef4444;}
+.toggle div{
+flex:1;
+padding:12px;
+text-align:center;
+font-weight:bold;
+}
 
-/* History */
+.big-btn{
+background:#b7791f;
+color:white;
+}
+
+.small-btn{
+background:#2b6cb0;
+color:white;
+}
+
+/* Tabs */
+.tabs{
+display:flex;
+margin:10px 20px;
+gap:10px;
+}
+
+.tab{
+flex:1;
+padding:10px;
+text-align:center;
+border-radius:12px;
+background:white;
+font-weight:bold;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+.active{
+background:linear-gradient(90deg,#ff5f6d,#ff3d3d);
+color:white;
+}
+
+/* Table */
+.table-container{
+margin:20px;
+background:white;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
 table{
 width:100%;
-margin-top:20px;
 border-collapse:collapse;
-font-size:13px;
 }
 
 th{
-padding:10px;
-border-bottom:1px solid rgba(255,255,255,0.1);
-color:#00f2ff;
+background:#ff4d4d;
+color:white;
+padding:12px;
+font-size:14px;
 }
 
 td{
-padding:10px;
-border-bottom:1px solid rgba(255,255,255,0.05);
+padding:12px;
+text-align:center;
+border-bottom:1px solid #eee;
+font-size:14px;
 }
 
-/* Extra sections */
-.stats{
-margin-top:40px;
-text-align:center;
-opacity:0.8;
+.number{
+font-size:22px;
+font-weight:bold;
 }
 
-.footer{
-margin-top:60px;
-padding:20px;
-text-align:center;
-font-size:12px;
-opacity:0.4;
+.red{color:#ef4444;}
+.green{color:#22c55e;}
+
+.dot{
+height:12px;
+width:12px;
+border-radius:50%;
+display:inline-block;
+}
+
+.dot.red{background:#ef4444;}
+.dot.green{background:#22c55e;}
+
+/* Pagination */
+.pagination{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+margin:20px;
+}
+
+.page-btn{
+background:#ff4d4d;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:10px;
+font-weight:bold;
 }
 
 </style>
@@ -137,124 +139,82 @@ opacity:0.4;
 
 <body>
 
-<div class="container">
+<div class="header">REDVAULT SIGNAL</div>
 
-<h1>NEXORA Quantum Engine</h1>
-
-<div class="card">
-
-<div class="timer-wrapper">
-<svg width="150" height="150">
-<circle r="70" cx="75" cy="75" id="circle"></circle>
-</svg>
+<div class="toggle">
+<div class="big-btn">Big</div>
+<div class="small-btn">Small</div>
 </div>
 
-<div id="period">Loading...</div>
-<div id="result">Waiting...</div>
-
+<div class="tabs">
+<div class="tab active">Game History</div>
+<div class="tab">Chart</div>
+<div class="tab">Strategy</div>
 </div>
 
-<div class="card">
-<h3>Last 10 Records</h3>
+<div class="table-container">
 <table>
 <thead>
 <tr>
 <th>Period</th>
-<th>Result</th>
+<th>Number</th>
+<th>Big Small</th>
 <th>Color</th>
 </tr>
 </thead>
-<tbody id="historyTable"></tbody>
+<tbody id="historyTable">
+</tbody>
 </table>
 </div>
 
-<div class="stats card">
-<h3>Engine Status</h3>
-<p>Quantum Signal Core: Active</p>
-<p>Prediction Stability: 99.2%</p>
-<p>System Integrity: Secure</p>
-</div>
-
-<div class="footer">
-© 2026 NEXORA Quantum Engine | All rights reserved
-</div>
-
+<div class="pagination">
+<button class="page-btn">‹</button>
+<div>1 / 50</div>
+<button class="page-btn">›</button>
 </div>
 
 <script>
 
-let basePeriod=20000;
-let startTime=new Date("2024-01-01T00:00:00").getTime();
+let historyData=[];
+let periodBase=2026030100000;
+let counter=0;
 
-let history=JSON.parse(localStorage.getItem("nexoraHistory"))||[];
+function generate(){
 
-function getCurrentPeriod(){
-let now=Date.now();
-let minutes=Math.floor((now-startTime)/60000);
-return basePeriod+minutes;
-}
+counter++;
+let period=periodBase+counter;
 
-function getSecondsLeft(){
-let now=Date.now();
-let seconds=Math.floor((now-startTime)/1000);
-return 60-(seconds%60);
-}
-
-function generate(period){
-let number=period%10;
-let result=number>=5?"Result A":"Result B";
+let number=Math.floor(Math.random()*10);
+let size=number>=5?"Big":"Small";
 let color=number%2==0?"green":"red";
-return{period,result,color};
-}
 
-function update(){
+let row={
+period,number,size,color
+};
 
-let period=getCurrentPeriod();
-let seconds=getSecondsLeft();
-
-document.getElementById("period").innerHTML="Period: "+period;
-
-let circle=document.getElementById("circle");
-circle.style.strokeDashoffset=440*(seconds/60);
-
-if(history.length==0 || history[0].period!=period){
-
-let data=generate(period);
-
-history.unshift(data);
-history=history.slice(0,10);
-
-localStorage.setItem("nexoraHistory",JSON.stringify(history));
-
-document.getElementById("result").classList.remove("reveal");
-
-setTimeout(()=>{
-document.getElementById("result").innerHTML=
-`<span class="${data.color}">${data.result}</span>`;
-document.getElementById("result").classList.add("reveal");
-},300);
-
+historyData.unshift(row);
+historyData=historyData.slice(0,10);
 render();
-}
-
 }
 
 function render(){
+
 let html="";
-history.forEach(row=>{
+historyData.forEach(r=>{
 html+=`
 <tr>
-<td>${row.period}</td>
-<td>${row.result}</td>
-<td class="${row.color}">${row.color.toUpperCase()}</td>
+<td>${r.period}</td>
+<td class="number ${r.color}">${r.number}</td>
+<td>${r.size}</td>
+<td><span class="dot ${r.color}"></span></td>
 </tr>`;
 });
+
 document.getElementById("historyTable").innerHTML=html;
 }
 
-setInterval(update,1000);
-render();
-update();
+setInterval(generate,5000);
+generate();
 
 </script>
 
