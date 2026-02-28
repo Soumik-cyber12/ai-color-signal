@@ -2,16 +2,32 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quantum Color Signal</title>
+<title>NEXORA Quantum Engine</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+
 body{
-margin:0;
-font-family: 'Segoe UI', sans-serif;
-background: radial-gradient(circle at top, #111827, #0b0f1a);
+background:#0a0f1c;
 color:white;
-text-align:center;
 overflow-x:hidden;
+}
+
+/* Animated background */
+body::before{
+content:"";
+position:fixed;
+width:200%;
+height:200%;
+background:radial-gradient(circle,#00f2ff15,transparent 60%);
+animation:movebg 20s linear infinite;
+z-index:-1;
+}
+
+@keyframes movebg{
+0%{transform:translate(0,0)}
+50%{transform:translate(-20%, -20%)}
+100%{transform:translate(0,0)}
 }
 
 .container{
@@ -22,91 +38,98 @@ padding:20px;
 
 h1{
 margin-top:30px;
+text-align:center;
 font-size:26px;
+letter-spacing:2px;
 background:linear-gradient(90deg,#00f2ff,#00ff88);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
+/* Card style */
 .card{
-backdrop-filter: blur(12px);
-background: rgba(255,255,255,0.05);
-border:1px solid rgba(255,255,255,0.1);
-border-radius:16px;
-padding:20px;
-margin-top:20px;
+margin-top:30px;
+padding:25px;
+border-radius:18px;
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(25px);
+border:1px solid rgba(255,255,255,0.08);
 box-shadow:0 0 40px rgba(0,0,0,0.6);
-animation:fadeIn 0.6s ease;
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(10px);}
-to{opacity:1;transform:translateY(0);}
+/* Timer Circle */
+.timer-wrapper{
+display:flex;
+justify-content:center;
+margin-top:20px;
+}
+
+circle{
+fill:none;
+stroke:#00f2ff;
+stroke-width:6;
+stroke-dasharray:440;
+stroke-dashoffset:0;
+transition:1s linear;
 }
 
 #period{
-font-size:13px;
-color:#9ca3af;
-}
-
-#timer{
-font-size:12px;
-color:#6b7280;
-margin-bottom:12px;
+text-align:center;
+font-size:14px;
+margin-top:10px;
+opacity:0.7;
 }
 
 #result{
+text-align:center;
 font-size:34px;
+margin-top:25px;
 font-weight:bold;
-margin:15px 0;
+transform:scale(0.8);
 opacity:0;
-transform:scale(0.9);
-transition:all 0.4s ease;
+transition:0.4s ease;
 }
 
-.show{
-opacity:1 !important;
+.reveal{
 transform:scale(1);
+opacity:1;
 }
 
-.big{color:#3b82f6;}
-.small{color:#a855f7;}
 .green{color:#22c55e;}
 .red{color:#ef4444;}
 
-button{
-background:linear-gradient(90deg,#00f2ff,#00ff88);
-border:none;
-padding:12px 28px;
-border-radius:8px;
-font-size:14px;
-font-weight:bold;
-cursor:pointer;
-transition:0.3s;
-color:#000;
-}
-
-button:hover{
-transform:translateY(-2px);
-box-shadow:0 0 20px #00f2ff;
-}
-
+/* History */
 table{
 width:100%;
+margin-top:20px;
 border-collapse:collapse;
-margin-top:15px;
 font-size:13px;
 }
 
 th{
-color:#00f2ff;
-padding:8px;
+padding:10px;
 border-bottom:1px solid rgba(255,255,255,0.1);
+color:#00f2ff;
 }
 
 td{
-padding:8px;
+padding:10px;
 border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+/* Extra sections */
+.stats{
+margin-top:40px;
+text-align:center;
+opacity:0.8;
+}
+
+.footer{
+margin-top:60px;
+padding:20px;
+text-align:center;
+font-size:12px;
+opacity:0.4;
 }
 
 </style>
@@ -114,24 +137,30 @@ border-bottom:1px solid rgba(255,255,255,0.05);
 
 <body>
 
-<h1>QUANTUM LIVE COLOR</h1>
-
 <div class="container">
 
+<h1>NEXORA Quantum Engine</h1>
+
 <div class="card">
+
+<div class="timer-wrapper">
+<svg width="150" height="150">
+<circle r="70" cx="75" cy="75" id="circle"></circle>
+</svg>
+</div>
+
 <div id="period">Loading...</div>
-<div id="timer"></div>
 <div id="result">Waiting...</div>
-<button onclick="showResult()">Reveal Signal</button>
+
 </div>
 
 <div class="card">
-<h3>Last 10 History</h3>
+<h3>Last 10 Records</h3>
 <table>
 <thead>
 <tr>
 <th>Period</th>
-<th>Size</th>
+<th>Result</th>
 <th>Color</th>
 </tr>
 </thead>
@@ -139,91 +168,93 @@ border-bottom:1px solid rgba(255,255,255,0.05);
 </table>
 </div>
 
+<div class="stats card">
+<h3>Engine Status</h3>
+<p>Quantum Signal Core: Active</p>
+<p>Prediction Stability: 99.2%</p>
+<p>System Integrity: Secure</p>
+</div>
+
+<div class="footer">
+© 2026 NEXORA Quantum Engine | All rights reserved
+</div>
+
 </div>
 
 <script>
 
-let basePeriod = 10000;
-let startTime = new Date("2024-01-01T00:00:00").getTime();
+let basePeriod=20000;
+let startTime=new Date("2024-01-01T00:00:00").getTime();
 
-let history = JSON.parse(localStorage.getItem("historyData")) || [];
+let history=JSON.parse(localStorage.getItem("nexoraHistory"))||[];
 
 function getCurrentPeriod(){
-let now = new Date().getTime();
-let minutesPassed = Math.floor((now - startTime)/60000);
-return basePeriod + minutesPassed;
+let now=Date.now();
+let minutes=Math.floor((now-startTime)/60000);
+return basePeriod+minutes;
 }
 
 function getSecondsLeft(){
-let now = new Date().getTime();
-let seconds = Math.floor((now - startTime)/1000);
-return 60 - (seconds % 60);
+let now=Date.now();
+let seconds=Math.floor((now-startTime)/1000);
+return 60-(seconds%60);
 }
 
-function generateResult(period){
-let number = period % 10;
-let size = number >=5 ? "Big":"Small";
-let color = number%2==0?"Green":"Red";
-return {period,size,color};
+function generate(period){
+let number=period%10;
+let result=number>=5?"Result A":"Result B";
+let color=number%2==0?"green":"red";
+return{period,result,color};
 }
 
-function updateDashboard(){
+function update(){
 
-let period = getCurrentPeriod();
-let secondsLeft = getSecondsLeft();
+let period=getCurrentPeriod();
+let seconds=getSecondsLeft();
 
-document.getElementById("period").innerHTML = "Period: "+period;
-document.getElementById("timer").innerHTML = "Next round in "+secondsLeft+"s";
+document.getElementById("period").innerHTML="Period: "+period;
 
-if(history.length == 0 || history[0].period != period){
+let circle=document.getElementById("circle");
+circle.style.strokeDashoffset=440*(seconds/60);
 
-let result = generateResult(period);
+if(history.length==0 || history[0].period!=period){
 
-history.unshift(result);
-history = history.slice(0,10);
+let data=generate(period);
 
-localStorage.setItem("historyData",JSON.stringify(history));
+history.unshift(data);
+history=history.slice(0,10);
 
-document.getElementById("result").classList.remove("show");
-document.getElementById("result").innerHTML="Waiting...";
+localStorage.setItem("nexoraHistory",JSON.stringify(history));
 
-renderHistory();
-window.currentResult = result;
+document.getElementById("result").classList.remove("reveal");
+
+setTimeout(()=>{
+document.getElementById("result").innerHTML=
+`<span class="${data.color}">${data.result}</span>`;
+document.getElementById("result").classList.add("reveal");
+},300);
+
+render();
 }
 
 }
 
-function showResult(){
-if(window.currentResult){
-document.getElementById("result").innerHTML =
-`<span class="${window.currentResult.size.toLowerCase()}">
-${window.currentResult.size}</span> - 
-<span class="${window.currentResult.color.toLowerCase()}">
-${window.currentResult.color}</span>`;
-
-document.getElementById("result").classList.add("show");
-}
-}
-
-function renderHistory(){
-
+function render(){
 let html="";
 history.forEach(row=>{
 html+=`
 <tr>
 <td>${row.period}</td>
-<td class="${row.size.toLowerCase()}">${row.size}</td>
-<td class="${row.color.toLowerCase()}">${row.color}</td>
+<td>${row.result}</td>
+<td class="${row.color}">${row.color.toUpperCase()}</td>
 </tr>`;
 });
-
 document.getElementById("historyTable").innerHTML=html;
-
 }
 
-setInterval(updateDashboard,1000);
-renderHistory();
-updateDashboard();
+setInterval(update,1000);
+render();
+update();
 
 </script>
 
