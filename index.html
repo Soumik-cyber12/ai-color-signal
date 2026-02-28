@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Obsidian X — Synced Engine</title>
+<title>Obsidian X — Live Synced Engine</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
@@ -27,48 +27,37 @@ border:1px solid rgba(255,255,255,0.08);
 box-shadow:0 0 50px rgba(0,0,0,0.8);
 }
 
-/* BET PANEL */
 .bet-hero{
 text-align:center;font-size:40px;font-weight:bold;
 margin-top:20px;opacity:0;transform:scale(0.85);
 transition:0.5s ease;white-space:nowrap;
 }
+
 .reveal{opacity:1;transform:scale(1);}
 .size-text{color:white;font-weight:bold;}
 .green{color:#22c55e;}
 .red{color:#ef4444;}
 
-/* COUNTDOWN BAR */
 .countdown-box{margin-top:25px;text-align:center;}
 
 #countdownText{
-font-size:28px;
-font-weight:bold;
-margin-bottom:10px;
-letter-spacing:2px;
-color:#00f2ff;
-transition:0.3s;
+font-size:28px;font-weight:bold;margin-bottom:10px;
+letter-spacing:2px;color:#00f2ff;transition:0.3s;
 }
 
 .progress-bar{
-width:100%;
-height:8px;
+width:100%;height:8px;
 background:rgba(255,255,255,0.1);
-border-radius:10px;
-overflow:hidden;
+border-radius:10px;overflow:hidden;
 }
 
 #progressFill{
-height:100%;
-width:100%;
+height:100%;width:100%;
 background:linear-gradient(90deg,#00f2ff,#8b5cf6);
-transition:1s linear;
-border-radius:10px;
+transition:1s linear;border-radius:10px;
 }
 
-.pulse{
-animation:pulseAnim 0.7s infinite alternate;
-}
+.pulse{animation:pulseAnim 0.7s infinite alternate;}
 
 @keyframes pulseAnim{
 from{opacity:1;}
@@ -91,7 +80,7 @@ td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:center
 <div class="container">
 
 <h1>OBSIDIAN X</h1>
-<div class="subtitle">REAL TIME SYNCED ENGINE</div>
+<div class="subtitle">LIVE REAL SYNC ENGINE</div>
 
 <div class="card">
 <div style="opacity:0.6;font-size:13px;text-align:center;">
@@ -125,7 +114,7 @@ LIVE BET SUGGESTION
 </div>
 
 <div class="footer">
-© 2026 Obsidian X Synced System
+© 2026 Obsidian X Synced Core
 </div>
 
 </div>
@@ -163,9 +152,9 @@ if(p.y>canvas.height)p.y=0;
 }
 setInterval(drawParticles,30);
 
-/* SYNC SETTINGS */
-const baseTime=new Date("2026-02-28T02:25:00").getTime();
-const baseCounter=11256;
+/* ===== NEW SYNC SETTINGS ===== */
+const baseTime=new Date("2026-02-28T02:31:00").getTime();
+const baseCounter=11262;
 const datePrefix="202602281000";
 
 let history=JSON.parse(localStorage.getItem("obsidianSync"))||[];
@@ -198,7 +187,7 @@ let seconds=getSecondsLeft();
 
 document.getElementById("period").innerHTML="Period: "+period;
 
-/* Countdown update */
+/* Countdown */
 let sec=seconds.toString().padStart(2,'0');
 document.getElementById("countdownText").innerHTML="00:"+sec;
 
