@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obsidian X</title>
 
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:radial-gradient(circle at top,#0f172a,#020617);
+color:white;
+overflow:hidden;
+}
+
+/* Glass Popup */
+.glass{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(25px);
+border-radius:28px;
+padding:30px;
+width:90%;
+max-width:400px;
+text-align:center;
+box-shadow:0 0 40px rgba(0,0,0,0.8);
+border:1px solid rgba(255,255,255,0.1);
+animation:fadeIn .6s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:scale(.9)}
+to{opacity:1;transform:scale(1)}
+}
+
+button{
+margin-top:20px;
+padding:14px 28px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+font-weight:bold;
+font-size:16px;
+}
+
+/* Connect Button */
+.connect-btn{
+background:linear-gradient(135deg,#00f2ff,#8b5cf6,#ff4d00);
+background-size:200% 200%;
+color:white;
+animation:move 4s linear infinite;
+box-shadow:0 0 15px rgba(139,92,246,0.6);
+}
+@keyframes move{
+0%{background-position:0%}
+100%{background-position:200%}
+}
+
+.progress-box{
+margin-top:25px;
+display:none;
+}
+
+.bar{
+height:10px;
+background:rgba(255,255,255,0.1);
+border-radius:10px;
+overflow:hidden;
+margin-top:15px;
+}
+
+.fill{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00f2ff,#8b5cf6);
+transition:.3s;
+}
+
+.status{
+margin-top:15px;
+opacity:.8;
+}
+
+.hidden{display:none}
+
+.success{
+color:#22c55e;
+font-size:20px;
+animation:pop .5s ease;
+}
+@keyframes pop{
+from{transform:scale(.7);opacity:0}
+to{transform:scale(1);opacity:1}
+}
+</style>
+</head>
+
+<body>
+
+<div class="glass" id="welcomePopup">
+<h2>Welcome To Obsidian X</h2>
+<p style="margin-top:10px;opacity:.7;">Premium AI Signal System</p>
+<button onclick="closeWelcome()">Continue</button>
+</div>
+
+<div class="glass hidden" id="connectBox">
+<h3>Connect With 91 CLUB Server</h3>
+<button class="connect-btn" onclick="startConnection()">CONNECT</button>
+
+<div class="progress-box" id="progressBox">
+<div class="status" id="statusText">Connecting...</div>
+<div class="bar">
+<div class="fill" id="progressFill"></div>
+</div>
+</div>
+</div>
+
+<script>
+function closeWelcome(){
+document.getElementById("welcomePopup").classList.add("hidden");
+document.getElementById("connectBox").classList.remove("hidden");
+}
+
+function startConnection(){
+let progressBox=document.getElementById("progressBox");
+let fill=document.getElementById("progressFill");
+let status=document.getElementById("statusText");
+
+progressBox.style.display="block";
+
+let progress=0;
+let interval=setInterval(()=>{
+progress+=5;
+fill.style.width=progress+"%";
+
+if(progress<25){
+status.innerText="Connecting...";
+}
+else if(progress<50){
+status.innerText="Checking 1 Min WinGo Chart...";
+}
+else if(progress<75){
+status.innerText="Finalizing Updates...";
+}
+else if(progress<100){
+status.innerText="Wait For Few More Seconds...";
+}
+else{
+clearInterval(interval);
+status.innerHTML="<span class='success'>CONNECTED ✓</span>";
+setTimeout(()=>{
+window.location.href="https://soumik-cyber12.github.io/ai-color-signal/";
+},1500);
+}
+
+},300);
+}
+</script>
+
+</body>
+</html>
