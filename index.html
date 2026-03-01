@@ -4,101 +4,282 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Obsidian X</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
 body{
-background:#0b1020;
+background:#030712;
 color:white;
-font-family:sans-serif;
+overflow-x:hidden;
+}
+
+/* Naruto Style Logo */
+.naruto-logo{
+font-family:'Bangers',cursive;
+font-size:42px;
 text-align:center;
-padding-top:60px;
+margin-top:40px;
+letter-spacing:3px;
+background:linear-gradient(90deg,#ff4d00,#ffcc00,#00f2ff,#8b5cf6,#ff4d00);
+background-size:400% 400%;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:gradientMove 12s ease infinite;
+text-shadow:
+3px 3px 0px #000,
+0 0 30px rgba(255,120,0,0.4);
 }
+
+@keyframes gradientMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+/* Floating Particles */
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+.container{
+max-width:520px;
+margin:auto;
+padding:25px;
+}
+
 .card{
-background:rgba(255,255,255,0.05);
-margin:20px auto;
+margin-top:35px;
 padding:30px;
-border-radius:18px;
-max-width:420px;
-backdrop-filter:blur(20px);
+border-radius:25px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(25px);
+border:1px solid rgba(255,255,255,0.08);
+box-shadow:0 0 60px rgba(0,0,0,0.9);
+text-align:center;
 }
-#result{
-font-size:28px;
+
+.bet{
 font-weight:bold;
-margin:15px 0;
+margin-top:20px;
+font-size:clamp(26px,8vw,40px);
+display:flex;
+justify-content:center;
+align-items:center;
+white-space:nowrap;
 }
+
+.size{color:white;}
 .green{color:#22c55e;}
 .red{color:#ef4444;}
-#period{
-opacity:0.6;
-margin-top:10px;
-}
+
 #countdown{
-font-size:22px;
-color:#00e5ff;
-margin-top:10px;
+font-size:30px;
+margin-top:20px;
+color:#00f2ff;
+transition:0.3s;
+}
+
+.warning{
+color:red !important;
+text-shadow:0 0 20px red;
+}
+
+.progress{
+height:8px;
+margin-top:12px;
+border-radius:10px;
+background:rgba(255,255,255,0.1);
+overflow:hidden;
+}
+
+.fill{
+height:100%;
+background:linear-gradient(90deg,#00f2ff,#8b5cf6);
+width:100%;
+transition:1s linear;
+}
+
+.period{
+margin-top:15px;
+opacity:0.6;
+font-size:14px;
+}
+
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+font-size:14px;
+}
+
+th{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.15);
+color:#00f2ff;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.05);
+text-align:center;
 }
 </style>
 </head>
 
 <body>
 
-<h1>OBSIDIAN X</h1>
+<canvas id="particles"></canvas>
+
+<div class="container">
+
+<h1 class="naruto-logo">OBSIDIAN X</h1>
 
 <div class="card">
-<div>LIVE RESULT</div>
-<div id="result">Loading...</div>
-<div id="countdown"></div>
-<div id="period"></div>
+<div style="opacity:0.6;">LIVE RESULT</div>
+
+<div id="result" class="bet">Loading...</div>
+
+<div id="countdown">00:60</div>
+
+<div class="progress">
+<div id="bar" class="fill"></div>
+</div>
+
+<div class="period">
+Period: <span id="period"></span>
+</div>
+</div>
+
+<div class="card">
+<h3 style="margin-bottom:15px;">Last 10 History</h3>
+
+<table>
+<thead>
+<tr>
+<th>Period</th>
+<th>Result</th>
+<th>Color</th>
+</tr>
+</thead>
+<tbody id="history"></tbody>
+</table>
+</div>
+
 </div>
 
 <script>
 
-/* ===== BASE SETTINGS ===== */
+/* Floating Particles */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-const BASE_COUNTER = 11322;
+let particles=[];
+for(let i=0;i<80;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*2,
+d:Math.random()*0.6
+});
+}
 
-/* 
-  Base time jab tumne diya tha:
-  3:28 AM
-*/
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="rgba(0,242,255,0.4)";
+particles.forEach(p=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+});
+particles.forEach(p=>{
+p.y+=p.d;
+if(p.y>canvas.height)p.y=0;
+});
+}
+setInterval(draw,30);
 
-const BASE_HOUR = 3;
-const BASE_MIN = 28;
+/* Period Auto Sync Based on Device Time */
+function getPeriod(){
+const now=new Date();
+return now.getFullYear().toString()
++(now.getMonth()+1).toString().padStart(2,'0')
++now.getDate().toString().padStart(2,'0')
++"1000"
++now.getHours().toString().padStart(2,'0')
++now.getMinutes().toString().padStart(2,'0');
+}
 
-/* ===== ENGINE ===== */
+/* Engine */
+let historyData = JSON.parse(localStorage.getItem("obsidianHistory")) || [];
+let running = JSON.parse(localStorage.getItem("runningResult"));
+let runningPeriod = localStorage.getItem("runningPeriod");
+
+function randomResult(){
+return {
+size: Math.random()<0.5?"BIG":"SMALL",
+color: Math.random()<0.5?"GREEN":"RED"
+};
+}
 
 function update(){
 
-    const now = new Date();
+let now=new Date();
+let secondsLeft=60-now.getSeconds();
+let period=getPeriod();
 
-    const totalNow = now.getHours()*60 + now.getMinutes();
-    const totalBase = BASE_HOUR*60 + BASE_MIN;
+document.getElementById("countdown").innerHTML="00:"+secondsLeft.toString().padStart(2,"0");
+document.getElementById("bar").style.width=(secondsLeft/60)*100+"%";
+document.getElementById("period").innerText=period;
 
-    const diff = totalNow - totalBase;
-
-    const counter = BASE_COUNTER + diff;
-
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth()+1).padStart(2,'0');
-    const dd = String(now.getDate()).padStart(2,'0');
-
-    const period = `${yyyy}${mm}${dd}1000${counter}`;
-
-    document.getElementById("period").innerText = "Period: " + period;
-
-    const secondsLeft = 60 - now.getSeconds();
-    document.getElementById("countdown").innerText =
-        "00:" + String(secondsLeft).padStart(2,'0');
-
-    const seed = counter % 2;
-    const size = seed===0 ? "BIG" : "SMALL";
-    const color = seed===0 ? "GREEN" : "RED";
-
-    document.getElementById("result").innerHTML =
-        `<span>${size}</span> - <span class="${color.toLowerCase()}">${color}</span>`;
+if(secondsLeft<=5){
+document.getElementById("countdown").classList.add("warning");
+}else{
+document.getElementById("countdown").classList.remove("warning");
 }
 
-update();
+if(!running || runningPeriod!==period){
+if(running && runningPeriod!==period){
+historyData.unshift({
+period: runningPeriod,
+size: running.size,
+color: running.color
+});
+historyData=historyData.slice(0,10);
+localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
+}
+running=randomResult();
+runningPeriod=period;
+localStorage.setItem("runningResult",JSON.stringify(running));
+localStorage.setItem("runningPeriod",period);
+}
+
+document.getElementById("result").innerHTML=
+`<span class="size">${running.size}</span> - <span class="${running.color.toLowerCase()}">${running.color}</span>`;
+
+renderHistory();
+}
+
+function renderHistory(){
+let html="";
+historyData.forEach(r=>{
+html+=`
+<tr>
+<td>${r.period}</td>
+<td class="size">${r.size}</td>
+<td class="${r.color.toLowerCase()}">${r.color}</td>
+</tr>`;
+});
+document.getElementById("history").innerHTML=html;
+}
+
 setInterval(update,1000);
+update();
 
 </script>
 
