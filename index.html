@@ -4,47 +4,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Obsidian X</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box}
 body{
-background:radial-gradient(circle at top,#0f172a,#020617);
+min-height:100vh;
+background:linear-gradient(180deg,#030712,#020617,#030712);
 color:white;
-overflow-x:hidden;
 font-family:'Segoe UI',sans-serif;
+overflow-x:hidden;
 }
 
-/* Strong Glass UI */
-.card{
-margin-top:40px;
-padding:30px;
-border-radius:28px;
-background:rgba(255,255,255,0.06);
-backdrop-filter:blur(35px);
-border:1px solid rgba(255,255,255,0.08);
-box-shadow:0 0 80px rgba(0,0,0,0.9);
-text-align:center;
-transition:0.4s;
-}
-
-/* Logo */
+/* LOGO */
 .logo{
-font-family:'Bangers',cursive;
-font-size:44px;
+font-family:'Orbitron',sans-serif;
+font-size:42px;
 text-align:center;
 margin-top:50px;
-letter-spacing:3px;
-background:linear-gradient(90deg,#ff4d00,#ffcc00,#00f2ff,#8b5cf6,#ff4d00);
-background-size:400% 400%;
+letter-spacing:4px;
+background:linear-gradient(90deg,#00f2ff,#8b5cf6,#ff4d00,#00f2ff);
+background-size:300% 300%;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
-animation:gradientMove 12s ease infinite;
+animation:flow 8s linear infinite;
 }
-@keyframes gradientMove{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
+@keyframes flow{
+0%{background-position:0%}
+100%{background-position:300%}
 }
 
 .container{
@@ -53,6 +40,18 @@ margin:auto;
 padding:25px;
 }
 
+.card{
+margin-top:40px;
+padding:30px;
+border-radius:28px;
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(30px);
+border:1px solid rgba(255,255,255,0.08);
+box-shadow:0 0 60px rgba(0,0,0,0.8);
+text-align:center;
+}
+
+/* INPUT */
 input{
 width:100%;
 padding:15px;
@@ -67,6 +66,7 @@ text-align:center;
 letter-spacing:2px;
 }
 
+/* BUTTON */
 button{
 margin-top:20px;
 padding:14px 30px;
@@ -79,10 +79,7 @@ font-size:16px;
 cursor:pointer;
 transition:0.3s;
 }
-
-button:active{
-transform:scale(0.95);
-}
+button:active{transform:scale(0.95)}
 
 .result{
 font-size:34px;
@@ -90,17 +87,16 @@ margin-top:30px;
 font-weight:bold;
 opacity:0;
 transform:translateY(10px);
-transition:0.5s ease;
+transition:0.4s ease;
 }
-
 .show{
 opacity:1;
 transform:translateY(0);
 }
 
-.size{color:white;}
-.green{color:#22c55e;}
-.red{color:#ef4444;}
+.size{color:white}
+.green{color:#22c55e}
+.red{color:#ef4444}
 
 table{
 width:100%;
@@ -114,14 +110,35 @@ padding:12px;
 border-bottom:1px solid rgba(255,255,255,0.15);
 color:#00f2ff;
 }
-
 td{
 padding:12px;
 border-bottom:1px solid rgba(255,255,255,0.05);
 text-align:center;
 }
 
-/* Particles */
+/* TELEGRAM ICON */
+.telegram{
+position:fixed;
+bottom:25px;
+right:25px;
+width:55px;
+height:55px;
+border-radius:50%;
+background:#0088cc;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+color:white;
+text-decoration:none;
+box-shadow:0 0 20px rgba(0,136,204,0.8);
+transition:0.3s;
+}
+.telegram:hover{
+transform:scale(1.1);
+}
+
+/* PARTICLES */
 canvas{
 position:fixed;
 top:0;
@@ -166,16 +183,18 @@ z-index:-1;
 
 </div>
 
+<a href="https://t.me/R4GE143" target="_blank" class="telegram">✈️</a>
+
 <script>
 
-/* More Floating Particles */
+/* PARTICLES */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
 let particles=[];
-for(let i=0;i<200;i++){
+for(let i=0;i<220;i++){
 particles.push({
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
@@ -183,7 +202,6 @@ r:Math.random()*2.5,
 d:Math.random()*0.9
 });
 }
-
 function draw(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle="rgba(0,242,255,0.5)";
@@ -199,39 +217,30 @@ if(p.y>canvas.height)p.y=0;
 }
 setInterval(draw,30);
 
-/* Restrict alphabets */
+/* INPUT NUMBER ONLY */
 document.getElementById("periodInput").addEventListener("input",function(){
 this.value=this.value.replace(/[^0-9]/g,'');
 });
 
-/* Logic */
-
-let historyData = JSON.parse(localStorage.getItem("obsidianHistory")) || {};
-let today = new Date().toISOString().slice(0,10);
+/* LOGIC PERSIST FIX */
+let today=new Date().toISOString().slice(0,10);
+let allData=JSON.parse(localStorage.getItem("obsidianData"))||{};
+if(!allData[today]) allData[today]={};
 
 function generateResult(period){
-
-if(!historyData[today]){
-historyData[today]={};
-}
-
-if(historyData[today][period]){
-return historyData[today][period];
-}
+if(allData[today][period]) return allData[today][period];
 
 let size=Math.random()<0.5?"BIG":"SMALL";
 let color=Math.random()<0.5?"GREEN":"RED";
 
 let result={size,color};
+allData[today][period]=result;
 
-historyData[today][period]=result;
-localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
-
+localStorage.setItem("obsidianData",JSON.stringify(allData));
 return result;
 }
 
 function showResult(){
-
 let input=document.getElementById("periodInput").value.trim();
 if(input.length!==5){
 alert("Enter valid 5 digit period");
@@ -243,20 +252,16 @@ let resultDiv=document.getElementById("result");
 
 resultDiv.classList.remove("show");
 setTimeout(()=>{
-
 resultDiv.innerHTML=
 `<span class="size">${result.size}</span> - <span class="${result.color.toLowerCase()}">${result.color}</span>`;
-
 resultDiv.classList.add("show");
-
-},250);
+},200);
 
 renderHistory();
 }
 
 function renderHistory(){
-
-let todayResults=historyData[today]||{};
+let todayResults=allData[today]||{};
 let entries=Object.entries(todayResults).slice(-5).reverse();
 
 let html="";
