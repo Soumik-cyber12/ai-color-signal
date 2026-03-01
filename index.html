@@ -7,39 +7,44 @@
 <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;}
 body{
-background:#030712;
+background:radial-gradient(circle at top,#0f172a,#020617);
 color:white;
 overflow-x:hidden;
+font-family:'Segoe UI',sans-serif;
+}
+
+/* Strong Glass UI */
+.card{
+margin-top:40px;
+padding:30px;
+border-radius:28px;
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(35px);
+border:1px solid rgba(255,255,255,0.08);
+box-shadow:0 0 80px rgba(0,0,0,0.9);
+text-align:center;
+transition:0.4s;
 }
 
 /* Logo */
 .logo{
 font-family:'Bangers',cursive;
-font-size:42px;
+font-size:44px;
 text-align:center;
-margin-top:40px;
+margin-top:50px;
 letter-spacing:3px;
 background:linear-gradient(90deg,#ff4d00,#ffcc00,#00f2ff,#8b5cf6,#ff4d00);
 background-size:400% 400%;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
-animation:gradientMove 10s ease infinite;
-text-shadow:3px 3px 0 #000,0 0 25px rgba(255,120,0,0.4);
+animation:gradientMove 12s ease infinite;
 }
 @keyframes gradientMove{
 0%{background-position:0% 50%;}
 50%{background-position:100% 50%;}
 100%{background-position:0% 50%;}
-}
-
-/* Particles */
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:-1;
 }
 
 .container{
@@ -48,60 +53,49 @@ margin:auto;
 padding:25px;
 }
 
-.card{
-margin-top:35px;
-padding:30px;
-border-radius:25px;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(25px);
-border:1px solid rgba(255,255,255,0.08);
-box-shadow:0 0 60px rgba(0,0,0,0.9);
-text-align:center;
-transition:0.3s;
-}
-
 input{
 width:100%;
-padding:14px;
-margin-top:15px;
-border-radius:12px;
-border:none;
+padding:15px;
+margin-top:18px;
+border-radius:16px;
+border:1px solid rgba(255,255,255,0.1);
 outline:none;
-background:#111827;
+background:rgba(255,255,255,0.05);
 color:white;
-font-size:18px;
+font-size:20px;
 text-align:center;
+letter-spacing:2px;
 }
 
 button{
-margin-top:15px;
-padding:12px 20px;
+margin-top:20px;
+padding:14px 30px;
 border:none;
-border-radius:12px;
-background:linear-gradient(90deg,#00f2ff,#8b5cf6);
+border-radius:20px;
+background:linear-gradient(135deg,#00f2ff,#8b5cf6);
 color:white;
 font-weight:bold;
 font-size:16px;
 cursor:pointer;
 transition:0.3s;
 }
-button:hover{
-transform:scale(1.05);
-box-shadow:0 0 20px #00f2ff;
+
+button:active{
+transform:scale(0.95);
 }
 
 .result{
-font-size:32px;
-margin-top:25px;
+font-size:34px;
+margin-top:30px;
 font-weight:bold;
 opacity:0;
-transform:scale(0.8);
-transition:all 0.4s ease;
+transform:translateY(10px);
+transition:0.5s ease;
 }
 
 .show{
 opacity:1;
-transform:scale(1);
+transform:translateY(0);
 }
 
 .size{color:white;}
@@ -110,7 +104,7 @@ transform:scale(1);
 
 table{
 width:100%;
-margin-top:20px;
+margin-top:25px;
 border-collapse:collapse;
 font-size:14px;
 }
@@ -126,6 +120,14 @@ padding:12px;
 border-bottom:1px solid rgba(255,255,255,0.05);
 text-align:center;
 }
+
+/* Particles */
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
 </style>
 </head>
 
@@ -138,9 +140,9 @@ text-align:center;
 <h1 class="logo">OBSIDIAN X</h1>
 
 <div class="card">
-<div style="opacity:0.7;">Enter Last 4 Digits of Current Period</div>
+<div style="opacity:0.7;">Enter Last 5 Digits of Current Period</div>
 
-<input type="text" id="periodInput" maxlength="4" placeholder="e.g. 1135">
+<input type="text" id="periodInput" maxlength="5" placeholder="e.g. 11325">
 
 <button onclick="showResult()">Show Result</button>
 
@@ -166,25 +168,25 @@ text-align:center;
 
 <script>
 
-/* Extra Particles */
+/* More Floating Particles */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
 let particles=[];
-for(let i=0;i<140;i++){
+for(let i=0;i<200;i++){
 particles.push({
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
-r:Math.random()*2,
-d:Math.random()*0.7
+r:Math.random()*2.5,
+d:Math.random()*0.9
 });
 }
 
 function draw(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
-ctx.fillStyle="rgba(0,242,255,0.4)";
+ctx.fillStyle="rgba(0,242,255,0.5)";
 particles.forEach(p=>{
 ctx.beginPath();
 ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -197,24 +199,33 @@ if(p.y>canvas.height)p.y=0;
 }
 setInterval(draw,30);
 
+/* Restrict alphabets */
+document.getElementById("periodInput").addEventListener("input",function(){
+this.value=this.value.replace(/[^0-9]/g,'');
+});
+
 /* Logic */
 
-let historyData = JSON.parse(localStorage.getItem("obsidianHistory")) || [];
-let resultCache = JSON.parse(localStorage.getItem("resultCache")) || {};
+let historyData = JSON.parse(localStorage.getItem("obsidianHistory")) || {};
+let today = new Date().toISOString().slice(0,10);
 
-function generateResult(seed){
+function generateResult(period){
 
-if(resultCache[seed]){
-return resultCache[seed];
+if(!historyData[today]){
+historyData[today]={};
 }
 
-let size = Math.random()<0.5 ? "BIG" : "SMALL";
-let color = Math.random()<0.5 ? "GREEN" : "RED";
+if(historyData[today][period]){
+return historyData[today][period];
+}
 
-let result = {size,color};
+let size=Math.random()<0.5?"BIG":"SMALL";
+let color=Math.random()<0.5?"GREEN":"RED";
 
-resultCache[seed]=result;
-localStorage.setItem("resultCache",JSON.stringify(resultCache));
+let result={size,color};
+
+historyData[today][period]=result;
+localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
 
 return result;
 }
@@ -222,15 +233,14 @@ return result;
 function showResult(){
 
 let input=document.getElementById("periodInput").value.trim();
-if(input.length!==4){
-alert("Enter valid 4 digit period");
+if(input.length!==5){
+alert("Enter valid 5 digit period");
 return;
 }
 
 let result=generateResult(input);
 let resultDiv=document.getElementById("result");
 
-/* Animation reset */
 resultDiv.classList.remove("show");
 setTimeout(()=>{
 
@@ -239,28 +249,21 @@ resultDiv.innerHTML=
 
 resultDiv.classList.add("show");
 
-},200);
-
-/* Prevent duplicate history entry */
-if(historyData.length===0 || historyData[0].period!==input){
-historyData.unshift({
-period:input,
-size:result.size,
-color:result.color
-});
-historyData=historyData.slice(0,5);
-localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
-}
+},250);
 
 renderHistory();
 }
 
 function renderHistory(){
+
+let todayResults=historyData[today]||{};
+let entries=Object.entries(todayResults).slice(-5).reverse();
+
 let html="";
-historyData.forEach(r=>{
+entries.forEach(([period,r])=>{
 html+=`
 <tr>
-<td>${r.period}</td>
+<td>${period}</td>
 <td class="size">${r.size}</td>
 <td class="${r.color.toLowerCase()}">${r.color}</td>
 </tr>`;
