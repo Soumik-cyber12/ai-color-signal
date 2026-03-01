@@ -28,13 +28,13 @@ background-size:400% 400%;
 animation:gradientMove 10s ease infinite;
 text-shadow:3px 3px 0 #000,0 0 25px rgba(255,120,0,0.4);
 }
-
 @keyframes gradientMove{
 0%{background-position:0% 50%;}
 50%{background-position:100% 50%;}
 100%{background-position:0% 50%;}
 }
 
+/* Particles */
 canvas{
 position:fixed;
 top:0;
@@ -57,6 +57,7 @@ backdrop-filter:blur(25px);
 border:1px solid rgba(255,255,255,0.08);
 box-shadow:0 0 60px rgba(0,0,0,0.9);
 text-align:center;
+transition:0.3s;
 }
 
 input{
@@ -82,12 +83,25 @@ color:white;
 font-weight:bold;
 font-size:16px;
 cursor:pointer;
+transition:0.3s;
+}
+button:hover{
+transform:scale(1.05);
+box-shadow:0 0 20px #00f2ff;
 }
 
 .result{
 font-size:32px;
-margin-top:20px;
+margin-top:25px;
 font-weight:bold;
+opacity:0;
+transform:scale(0.8);
+transition:all 0.4s ease;
+}
+
+.show{
+opacity:1;
+transform:scale(1);
 }
 
 .size{color:white;}
@@ -134,12 +148,12 @@ text-align:center;
 </div>
 
 <div class="card">
-<h3 style="margin-bottom:15px;">Last 5 Results</h3>
+<h3 style="margin-bottom:15px;">History</h3>
 
 <table>
 <thead>
 <tr>
-<th>Last 4</th>
+<th>Period</th>
 <th>Result</th>
 <th>Color</th>
 </tr>
@@ -152,19 +166,19 @@ text-align:center;
 
 <script>
 
-/* Particles */
+/* Extra Particles */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
 let particles=[];
-for(let i=0;i<80;i++){
+for(let i=0;i<140;i++){
 particles.push({
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
 r:Math.random()*2,
-d:Math.random()*0.5
+d:Math.random()*0.7
 });
 }
 
@@ -200,7 +214,6 @@ let color = Math.random()<0.5 ? "GREEN" : "RED";
 let result = {size,color};
 
 resultCache[seed]=result;
-
 localStorage.setItem("resultCache",JSON.stringify(resultCache));
 
 return result;
@@ -209,26 +222,35 @@ return result;
 function showResult(){
 
 let input=document.getElementById("periodInput").value.trim();
-
 if(input.length!==4){
-alert("Enter valid 4 digit period number");
+alert("Enter valid 4 digit period");
 return;
 }
 
 let result=generateResult(input);
+let resultDiv=document.getElementById("result");
 
-document.getElementById("result").innerHTML=
+/* Animation reset */
+resultDiv.classList.remove("show");
+setTimeout(()=>{
+
+resultDiv.innerHTML=
 `<span class="size">${result.size}</span> - <span class="${result.color.toLowerCase()}">${result.color}</span>`;
 
+resultDiv.classList.add("show");
+
+},200);
+
+/* Prevent duplicate history entry */
+if(historyData.length===0 || historyData[0].period!==input){
 historyData.unshift({
 period:input,
 size:result.size,
 color:result.color
 });
-
 historyData=historyData.slice(0,5);
-
 localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
+}
 
 renderHistory();
 }
