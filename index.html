@@ -14,8 +14,8 @@ color:white;
 overflow-x:hidden;
 }
 
-/* Naruto Style Logo */
-.naruto-logo{
+/* Logo */
+.logo{
 font-family:'Bangers',cursive;
 font-size:42px;
 text-align:center;
@@ -25,10 +25,8 @@ background:linear-gradient(90deg,#ff4d00,#ffcc00,#00f2ff,#8b5cf6,#ff4d00);
 background-size:400% 400%;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
-animation:gradientMove 12s ease infinite;
-text-shadow:
-3px 3px 0px #000,
-0 0 30px rgba(255,120,0,0.4);
+animation:gradientMove 10s ease infinite;
+text-shadow:3px 3px 0 #000,0 0 25px rgba(255,120,0,0.4);
 }
 
 @keyframes gradientMove{
@@ -37,7 +35,6 @@ text-shadow:
 100%{background-position:0% 50%;}
 }
 
-/* Floating Particles */
 canvas{
 position:fixed;
 top:0;
@@ -62,52 +59,40 @@ box-shadow:0 0 60px rgba(0,0,0,0.9);
 text-align:center;
 }
 
-.bet{
+input{
+width:100%;
+padding:14px;
+margin-top:15px;
+border-radius:12px;
+border:none;
+outline:none;
+background:#111827;
+color:white;
+font-size:18px;
+text-align:center;
+}
+
+button{
+margin-top:15px;
+padding:12px 20px;
+border:none;
+border-radius:12px;
+background:linear-gradient(90deg,#00f2ff,#8b5cf6);
+color:white;
 font-weight:bold;
+font-size:16px;
+cursor:pointer;
+}
+
+.result{
+font-size:32px;
 margin-top:20px;
-font-size:clamp(26px,8vw,40px);
-display:flex;
-justify-content:center;
-align-items:center;
-white-space:nowrap;
+font-weight:bold;
 }
 
 .size{color:white;}
 .green{color:#22c55e;}
 .red{color:#ef4444;}
-
-#countdown{
-font-size:30px;
-margin-top:20px;
-color:#00f2ff;
-transition:0.3s;
-}
-
-.warning{
-color:red !important;
-text-shadow:0 0 20px red;
-}
-
-.progress{
-height:8px;
-margin-top:12px;
-border-radius:10px;
-background:rgba(255,255,255,0.1);
-overflow:hidden;
-}
-
-.fill{
-height:100%;
-background:linear-gradient(90deg,#00f2ff,#8b5cf6);
-width:100%;
-transition:1s linear;
-}
-
-.period{
-margin-top:15px;
-opacity:0.6;
-font-size:14px;
-}
 
 table{
 width:100%;
@@ -136,31 +121,25 @@ text-align:center;
 
 <div class="container">
 
-<h1 class="naruto-logo">OBSIDIAN X</h1>
+<h1 class="logo">OBSIDIAN X</h1>
 
 <div class="card">
-<div style="opacity:0.6;">LIVE RESULT</div>
+<div style="opacity:0.7;">Enter Last 4 Digits of Current Period</div>
 
-<div id="result" class="bet">Loading...</div>
+<input type="text" id="periodInput" maxlength="4" placeholder="e.g. 1135">
 
-<div id="countdown">00:60</div>
+<button onclick="showResult()">Show Result</button>
 
-<div class="progress">
-<div id="bar" class="fill"></div>
-</div>
-
-<div class="period">
-Period: <span id="period"></span>
-</div>
+<div id="result" class="result"></div>
 </div>
 
 <div class="card">
-<h3 style="margin-bottom:15px;">Last 10 History</h3>
+<h3 style="margin-bottom:15px;">Last 5 Results</h3>
 
 <table>
 <thead>
 <tr>
-<th>Period</th>
+<th>Last 4</th>
 <th>Result</th>
 <th>Color</th>
 </tr>
@@ -173,7 +152,7 @@ Period: <span id="period"></span>
 
 <script>
 
-/* Floating Particles */
+/* Particles */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
@@ -185,7 +164,7 @@ particles.push({
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
 r:Math.random()*2,
-d:Math.random()*0.6
+d:Math.random()*0.5
 });
 }
 
@@ -204,63 +183,52 @@ if(p.y>canvas.height)p.y=0;
 }
 setInterval(draw,30);
 
-/* Period Auto Sync Based on Device Time */
-function getPeriod(){
-const now=new Date();
-return now.getFullYear().toString()
-+(now.getMonth()+1).toString().padStart(2,'0')
-+now.getDate().toString().padStart(2,'0')
-+"1000"
-+now.getHours().toString().padStart(2,'0')
-+now.getMinutes().toString().padStart(2,'0');
-}
+/* Logic */
 
-/* Engine */
 let historyData = JSON.parse(localStorage.getItem("obsidianHistory")) || [];
-let running = JSON.parse(localStorage.getItem("runningResult"));
-let runningPeriod = localStorage.getItem("runningPeriod");
+let resultCache = JSON.parse(localStorage.getItem("resultCache")) || {};
 
-function randomResult(){
-return {
-size: Math.random()<0.5?"BIG":"SMALL",
-color: Math.random()<0.5?"GREEN":"RED"
-};
+function generateResult(seed){
+
+if(resultCache[seed]){
+return resultCache[seed];
 }
 
-function update(){
+let size = Math.random()<0.5 ? "BIG" : "SMALL";
+let color = Math.random()<0.5 ? "GREEN" : "RED";
 
-let now=new Date();
-let secondsLeft=60-now.getSeconds();
-let period=getPeriod();
+let result = {size,color};
 
-document.getElementById("countdown").innerHTML="00:"+secondsLeft.toString().padStart(2,"0");
-document.getElementById("bar").style.width=(secondsLeft/60)*100+"%";
-document.getElementById("period").innerText=period;
+resultCache[seed]=result;
 
-if(secondsLeft<=5){
-document.getElementById("countdown").classList.add("warning");
-}else{
-document.getElementById("countdown").classList.remove("warning");
+localStorage.setItem("resultCache",JSON.stringify(resultCache));
+
+return result;
 }
 
-if(!running || runningPeriod!==period){
-if(running && runningPeriod!==period){
-historyData.unshift({
-period: runningPeriod,
-size: running.size,
-color: running.color
-});
-historyData=historyData.slice(0,10);
-localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
+function showResult(){
+
+let input=document.getElementById("periodInput").value.trim();
+
+if(input.length!==4){
+alert("Enter valid 4 digit period number");
+return;
 }
-running=randomResult();
-runningPeriod=period;
-localStorage.setItem("runningResult",JSON.stringify(running));
-localStorage.setItem("runningPeriod",period);
-}
+
+let result=generateResult(input);
 
 document.getElementById("result").innerHTML=
-`<span class="size">${running.size}</span> - <span class="${running.color.toLowerCase()}">${running.color}</span>`;
+`<span class="size">${result.size}</span> - <span class="${result.color.toLowerCase()}">${result.color}</span>`;
+
+historyData.unshift({
+period:input,
+size:result.size,
+color:result.color
+});
+
+historyData=historyData.slice(0,5);
+
+localStorage.setItem("obsidianHistory",JSON.stringify(historyData));
 
 renderHistory();
 }
@@ -278,8 +246,7 @@ html+=`
 document.getElementById("history").innerHTML=html;
 }
 
-setInterval(update,1000);
-update();
+renderHistory();
 
 </script>
 
